@@ -24,3 +24,5 @@ Use linked lists for playlist
 songlist - play all
 playlist - store all songs in linked list
 song-  store the song name, artist, and duration details.
+
+Use CircularDoubleLinkedList so the user can traverse through the playlist
