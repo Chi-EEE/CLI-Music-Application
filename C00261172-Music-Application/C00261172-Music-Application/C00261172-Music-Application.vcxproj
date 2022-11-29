@@ -127,13 +127,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CircularDoubleLinkedList.h" />
+    <ClInclude Include="CircularDoubleLinkedListItem.h" />
+    <ClInclude Include="CircularLinkedList.h" />
+    <ClInclude Include="CircularLinkedListItem.h" />
+    <ClInclude Include="Colour.h" />
+    <ClInclude Include="DoubleLinkedList.h" />
+    <ClInclude Include="DoubleLinkedListItem.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="LinkedListItem.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Playlist.h" />
+    <ClInclude Include="Song.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CircularDoubleLinkedList.cpp" />
+    <ClCompile Include="CircularDoubleLinkedListItem.cpp" />
+    <ClCompile Include="CircularLinkedList.cpp" />
+    <ClCompile Include="CircularLinkedListItem.cpp" />
+    <ClCompile Include="DoubleLinkedList.cpp" />
+    <ClCompile Include="DoubleLinkedListItem.cpp" />
     <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="LinkedListItem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Playlist.cpp" />
+    <ClCompile Include="Song.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
