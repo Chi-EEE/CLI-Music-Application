@@ -1,14 +1,14 @@
 #pragma once
-template<typename T>
+template <class T>
 class LinkedListItem
 {
-	constructor(T data, LinkedListItem<T>* next) {
+public:
+	LinkedListItem(T data, LinkedListItem<T>* next) {
 		this->data = data;
 		this->next = next;
 	}
-private:
-
-public:
 	T data;
 	LinkedListItem<T>* next;
+private:
+
 };
