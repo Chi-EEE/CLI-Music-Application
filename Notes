@@ -1,0 +1,26 @@
+Dont have to actually store mp3 files 
+Pretend / Dont have to store data
+Have a play option
+Play() {
+	This song is now playing
+}
+Application
+TExt based menu
+You can use random number generator
+Dont hard code the songs
+You can have upload option
+createPlaylist
+addSong
+Doesnt actually play music
+Put message for the user to say that the music is playing
+
+Music Library
+Playlist
+More than 1 playlist
+
+Have a song list for the entire program
+Use linked lists for playlist
+
+songlist - play all
+playlist - store all songs in linked list
+song-  store the song name, artist, and duration details.
