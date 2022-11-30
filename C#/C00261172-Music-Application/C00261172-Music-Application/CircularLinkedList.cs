@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace C00261172_Music_Application
+namespace C00261172_Music_Application.DataStructure
 {
     internal class CircularLinkedList<T>
     {
         public void insert(T data)
         {
-            DoubleLinkedNode<T> node = new DoubleLinkedNode<T> (data, this.head, this.tail);
+            DoubleLinkedNode<T> node = new(data, this.head, this.tail);
             if (this.tail != null)
             {
-                this.tail.next = node;
+                this.tail.Next = node;
             }
             if (this.head == null)
             {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace C00261172_Music_Application
+namespace C00261172_Music_Application.Application
 {
     internal class Song
     {
