@@ -5,6 +5,7 @@ class Artist
 public:
 	void setName(std::string name) { this->name = name; }
 	std::string getName() { return this->name; }
+	bool operator==(Artist& rhs);
 private:
 	std::string name;
 };

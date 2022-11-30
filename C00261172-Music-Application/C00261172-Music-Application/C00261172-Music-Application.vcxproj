@@ -134,6 +134,7 @@
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="MusicLibrary.h" />
+    <ClInclude Include="RandomNumberGenerator.h" />
     <ClInclude Include="SingleLinkedNode.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Playlist.h" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MusicLibrary.cpp" />
     <ClCompile Include="Playlist.cpp" />
+    <ClCompile Include="RandomNumberGenerator.cpp" />
     <ClCompile Include="Song.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

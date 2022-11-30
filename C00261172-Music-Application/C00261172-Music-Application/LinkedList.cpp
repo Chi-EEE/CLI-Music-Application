@@ -11,9 +11,13 @@ inline void LinkedList<T>::insert(T data)
 }
 
 template<class T>
-inline void LinkedList<T>::remove(T data)
+inline T LinkedList<T>::remove(T data)
 {
-	SingleLinkedNode<T> temp = this.head;
-	this->head = temp.next;
-	return temp;
+	if (size > 0) {
+		size--;
+		SingleLinkedNode<T> temp = this.head;
+		this->head = temp.next;
+		return temp;
+	}
+	return NULL;
 }
