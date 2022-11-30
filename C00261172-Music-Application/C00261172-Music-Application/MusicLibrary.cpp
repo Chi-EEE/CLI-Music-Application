@@ -9,10 +9,13 @@ CircularLinkedList<Song> MusicLibrary::getShuffledSongList()
     }
     int linkedListSize2 = linkedListSize1 / 2;
     CircularLinkedList<Song> l1, l2;
-    Song tempSong1 = this->songs.getHead().get()->data;
-    Song tempSong2 = this->songs.getTail().get()->data;
+    DoubleLinkedNode<Song> tempSong1 = *(this->songs.getHead().get());
+    DoubleLinkedNode<Song> tempSong2 = *(this->songs.getTail().get());
     do {
-
+        l1.insert(tempSong1.data);
+        l2.insert(tempSong2.data);
+        tempSong1 = tempSong1->next();
+        tempSong2 = *(tempSong2->next());
     } while (tempSong1 != tempSong2);
     /*for (int i = this->songs.getSize() - 1; i >= 1; i--) {
         RandomNumberGenerator::getInstance().getNumberFromRange(i, this->songs.getSize());
