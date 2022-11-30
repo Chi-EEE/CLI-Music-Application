@@ -1,6 +1,10 @@
-#include "LinkedList.h"
+#include <iostream>
+#include <string>
+#include "CircularLinkedList.h"
+#include "Song.h"
 int main() {
-	LinkedList<int> l;
-	l.insert(12);
+	CircularLinkedList<Song> songs;
+	songs.insert(Song{ std::string("Name"), Artist{}, 1.9f });
+	songs.insert(Song{ std::string("Name"), Artist{}, 1.9f });
 	return 0;
 }

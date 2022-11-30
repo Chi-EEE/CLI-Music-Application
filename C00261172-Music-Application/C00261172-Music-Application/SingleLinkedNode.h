@@ -1,14 +1,14 @@
 #pragma once
 template <class T>
-class LinkedListItem
+class SingleLinkedNode
 {
 public:
-	LinkedListItem(T data, LinkedListItem<T>* next) {
+	SingleLinkedNode(T data, SingleLinkedNode<T>* next) {
 		this->data = data;
 		this->next = next;
 	}
 	T data;
-	LinkedListItem<T>* next;
+	SingleLinkedNode<T>* next;
 private:
 
 };
