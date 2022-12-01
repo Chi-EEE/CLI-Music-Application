@@ -9,19 +9,54 @@ namespace C00261172_Music_Application.Application
         static bool YesOrNo(string question)
         {
             Changed = true;
+            bool yes = false;
             while (true)
             {
-                BuildScreen();
-                Console.WriteLine(question);
-                Console.WriteLine("[Y | N]");
-                string input = Console.ReadLine();
-                switch (input)
+                if (Changed)
                 {
-                    case "Y":
-                        return true;
-                    case "N":
-                        return false;
+                    Changed = false;
+                    BuildScreen();
+                    Console.WriteLine(question);
+                    Console.Write("[");
+                    if (yes)
+                    {
+                        Console.Write("N");
+                        Console.Write(" | ");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write("Y");
+                        ResetConsoleColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write("N");
+                        ResetConsoleColor();
+                        Console.Write(" | ");
+                        Console.Write("Y");
+                    }
+                    Console.Write("]");
+                }
+                ConsoleKeyInfo cki = Console.ReadKey();
+                switch (cki.Key)
+                {
+                    case ConsoleKey.LeftArrow:
+                        if (yes)
+                        {
+                            Changed = true;
+                            yes = false;
+                        }
+                        break;
+                    case ConsoleKey.RightArrow:
+                        if (!yes)
+                        {
+                            Changed = true;
+                            yes = true;
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        return yes;
                     default:
+                        Console.Write("\b \b");
                         break;
                 }
             }
@@ -92,7 +127,7 @@ namespace C00261172_Music_Application.Application
         {
             Console.Clear();
             Console.WriteLine("My Audio Files: ");
-            Console.WriteLine(new string('=', Console.WindowWidth));
+            Console.Write(LINE);
             Audio firstSelectedAudio = AudioLibrary.GetSelectedAudio();
             Audio selectedAudio = firstSelectedAudio;
             int index = 1;
@@ -106,7 +141,7 @@ namespace C00261172_Music_Application.Application
                 DisplayAudioDetails(selectedAudio, index);
                 selectedAudio = AudioLibrary.getNextMusic();
             } while (firstSelectedAudio != selectedAudio);
-            Console.WriteLine(new string('=', Console.WindowWidth));
+            Console.Write(LINE);
         }
         private static void ResetConsoleColor()
         {
@@ -177,10 +212,6 @@ namespace C00261172_Music_Application.Application
                     BuildScreen();
                     BuildMenu(selectedOption);
                 }
-                else
-                {
-                    //Console.Write("\b \b");
-                }
                 ConsoleKeyInfo cki = Console.ReadKey();
                 switch (cki.Key)
                 {
@@ -201,27 +232,18 @@ namespace C00261172_Music_Application.Application
                     case ConsoleKey.Enter:
                         MenuOptions.ElementAt(selectedOption).Value.DynamicInvoke();
                         break;
+                    default:
+                        Console.Write("\b \b");
+                        break;
                 }
             }
         }
-        const int MF_BYCOMMAND = 0x00000000;
-        const int SC_MINIMIZE = 0xF020;
-        const int SC_MAXIMIZE = 0xF030;
-        const int SC_SIZE = 0xF000;
-        [DllImport("user32.dll")]
-        public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
-        [DllImport("kernel32.dll", ExactSpelling = true)]
-        private static extern IntPtr GetConsoleWindow();
         static void Main(string[] args)
         {
-            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MINIMIZE, MF_BYCOMMAND);
-            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);
-            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);
             Run();
         }
         private static readonly AudioLibrary AudioLibrary = new();
         private static bool Changed = true;
+        private const string LINE = "=======================================================================================================================\n";
     }
 }
