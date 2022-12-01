@@ -12,7 +12,7 @@ namespace C00261172_Music_Application.Application
         public Playlist(string name) { 
             this.Name = name;
         }
-        void AddMusic(Audio audio)
+        void AddAudio(Audio audio)
         {
             audioList.Insert(audio);
         }
