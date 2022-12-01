@@ -7,39 +7,15 @@ using System.Threading.Tasks;
 
 namespace C00261172_Music_Application.Application
 {
-    internal class Playlist
+    internal class Playlist: SelectableAudioList
     {
         public Playlist(string name) { 
             this.Name = name;
         }
-        void insert(Song song)
+        void AddMusic(Audio audio)
         {
-            Songs.insert(song);
-        }
-        void removeSelectedSong()
-        {
-
-        }
-        Song? getSelectedSong()
-        {
-            if (this.SelectedSong == null)
-            {
-                this.SelectedSong = this.Songs.head;
-            }
-            return this.SelectedSong?.Data;
-        }
-        Song? getNextSong()
-        {
-            if (this.SelectedSong == null)
-            {
-                this.SelectedSong = this.Songs.head;
-                return this.SelectedSong?.Data;
-            }
-            this.SelectedSong = this.SelectedSong.Next;
-            return this.SelectedSong.Data;
+            audioList.Insert(audio);
         }
         public string Name { get; set; }
-        private DoubleLinkedNode<Song>? SelectedSong { get; set; }
-        CircularLinkedList<Song> Songs = new();
     }
 }

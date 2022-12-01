@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace C00261172_Music_Application.Application
 {
-    internal class MusicLibrary
+    internal class AudioLibrary: SelectableAudioList
     {
-        public CircularLinkedList<Song> getShuffledSongList()
+        public void AddMusic(Audio audio)
+        {
+            audioList.Insert(audio);
+        }
+        public CircularLinkedList<Audio> getShuffledMusicList()
         {
             throw new NotImplementedException();
         }
-
-        private CircularLinkedList<Song> Songs = new();
     }
 }

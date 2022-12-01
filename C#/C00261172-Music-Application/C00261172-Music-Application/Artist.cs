@@ -13,11 +13,15 @@ namespace C00261172_Music_Application.Application
         }
         public static bool operator ==(Artist artistLeft, Artist artistRight)
         {
+            if (ReferenceEquals(artistLeft, artistRight)) return true;
+
+            if (ReferenceEquals(artistLeft, null) || ReferenceEquals(artistRight, null)) return false;
+
             return artistLeft.Name == artistRight.Name;
         }
         public static bool operator !=(Artist artistLeft, Artist artistRight)
         {
-            return artistLeft.Name != artistRight.Name;
+            return !(artistLeft == artistRight);
         }
         public string Name { get; set; }
     }
