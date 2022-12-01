@@ -67,7 +67,7 @@ namespace C00261172_Music_Application.Application
             while (true)
             {
                 BuildScreen();
-                Console.WriteLine(statement);
+                Console.Write(statement + "\n> ");
                 try
                 {
                     string intString = Console.ReadLine()!;
@@ -86,7 +86,7 @@ namespace C00261172_Music_Application.Application
             while (true)
             {
                 BuildScreen();
-                Console.WriteLine(statement);
+                Console.Write(statement + "\n> ");
                 try
                 {
                     string input = Console.ReadLine()!;
@@ -154,6 +154,7 @@ namespace C00261172_Music_Application.Application
         };
         private static void BuildMenu(int selectedOption)
         {
+            Console.WriteLine("Actions:");
             for (int i = 0; i < MenuOptions.Count; i++)
             {
                 if (i == selectedOption)
@@ -232,14 +233,31 @@ namespace C00261172_Music_Application.Application
                     case ConsoleKey.Enter:
                         MenuOptions.ElementAt(selectedOption).Value.DynamicInvoke();
                         break;
+                    case ConsoleKey.Tab:
+                        Console.Write("\b \b");
+                        break;
                     default:
                         Console.Write("\b \b");
                         break;
                 }
             }
         }
+        // Color: https://stackoverflow.com/questions/7937256/custom-text-color-in-c-sharp-console-application
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetConsoleMode(IntPtr hConsoleHandle, int mode);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool GetConsoleMode(IntPtr handle, out int mode);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr GetStdHandle(int handle);
+
         static void Main(string[] args)
         {
+            //Console.BackgroundColor = ConsoleColor.White;
+            //Console.Clear();
+            //Console.BackgroundColor = ConsoleColor.DarkGray;
+            //Console.WriteLine();
+            //Console.Read();
             Run();
         }
         private static readonly AudioLibrary AudioLibrary = new();
