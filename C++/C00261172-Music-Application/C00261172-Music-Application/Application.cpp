@@ -1,5 +1,7 @@
 #include "Application.h"
-#include <conio.h>
+#include <windows.h>
+#include <iostream>
+#include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
 
 void Application::run()
 {
@@ -46,10 +48,16 @@ void Application::run()
 
 char Application::keyPress()
 {
-	char character;
-	std::cin >> character;
-	#ifdef DEBUG
-	std::cout << character << '\n';
-	#endif
+	clock_t clock = std::clock();
+	while (true) {
+		std::cout << std::clock() - clock << "\n";
+	}
+	if (GetKeyState(VK_RETURN) < 0) {
+		std::cout << "1";
+	}
+	////#ifdef _DEBUG
+	//std::cout << "HI";
+	//std::cout << character << '\n';
+	////#endif
 	return 0;
 }

@@ -134,7 +134,6 @@
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="AudioLibrary.h" />
     <ClInclude Include="SelectableAudioList.h" />
-    <ClInclude Include="SingleLinkedNode.h" />
     <ClInclude Include="Playlist.h" />
     <ClInclude Include="Audio.h" />
   </ItemGroup>
