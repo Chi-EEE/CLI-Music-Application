@@ -14,15 +14,15 @@ namespace C00261172_Music_Application
         {
             if (this.SelectedAudio == null)
             {
-                this.SelectedAudio = this.audioList.Head;
+                this.SelectedAudio = this.AudioList.Head;
             }
             return this.SelectedAudio?.Data;
         }
-        public Audio? getNextMusic()
+        public Audio? GetNextMusic()
         {
             if (this.SelectedAudio == null)
             {
-                this.SelectedAudio = this.audioList.Head;
+                this.SelectedAudio = this.AudioList.Head;
                 return this.SelectedAudio?.Data;
             }
             this.SelectedAudio = this.SelectedAudio.Next;
@@ -30,9 +30,9 @@ namespace C00261172_Music_Application
         }
         public bool RemoveSelectedMusic()
         {
-            return audioList.RemoveData(GetSelectedAudio());
+            return AudioList.RemoveData(GetSelectedAudio());
         }
         private DoubleLinkedNode<Audio>? SelectedAudio { get; set; }
-        protected CircularLinkedList<Audio> audioList = new();
+        protected CircularLinkedList<Audio> AudioList = new();
     }
 }

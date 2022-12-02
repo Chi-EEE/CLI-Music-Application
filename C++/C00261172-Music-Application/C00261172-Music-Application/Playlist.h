@@ -1,11 +1,11 @@
 #pragma 
-#include "LinkedList.h"
-#include "Song.h"
-class Playlist
+#include "SelectableAudioList.h"
+#include "Audio.h"
+class Playlist: public SelectableAudioList
 {
 public:
-	void shuffle();
+	Playlist(std::string name);
+	void addAudio(Audio audio);
 private:
-	std::string playlistName;
-	LinkedList<Song> songs;
+	std::string name;
 };

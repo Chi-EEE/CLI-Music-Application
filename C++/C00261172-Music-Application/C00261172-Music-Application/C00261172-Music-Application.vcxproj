@@ -132,25 +132,21 @@
     <ClInclude Include="CircularLinkedList.h" />
     <ClInclude Include="Colour.h" />
     <ClInclude Include="DoubleLinkedNode.h" />
-    <ClInclude Include="LinkedList.h" />
-    <ClInclude Include="MusicLibrary.h" />
-    <ClInclude Include="RandomNumberGenerator.h" />
+    <ClInclude Include="AudioLibrary.h" />
+    <ClInclude Include="SelectableAudioList.h" />
     <ClInclude Include="SingleLinkedNode.h" />
-    <ClInclude Include="Menu.h" />
     <ClInclude Include="Playlist.h" />
-    <ClInclude Include="Song.h" />
+    <ClInclude Include="Audio.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Artist.cpp" />
     <ClCompile Include="DoubleLinkedNode.cpp" />
-    <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="MusicLibrary.cpp" />
+    <ClCompile Include="AudioLibrary.cpp" />
     <ClCompile Include="Playlist.cpp" />
-    <ClCompile Include="RandomNumberGenerator.cpp" />
-    <ClCompile Include="Song.cpp" />
+    <ClCompile Include="SelectableAudioList.cpp" />
+    <ClCompile Include="Audio.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

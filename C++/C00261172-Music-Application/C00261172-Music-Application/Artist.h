@@ -3,10 +3,12 @@
 class Artist
 {
 public:
+	Artist();
+	Artist(std::string name);
 	void setName(std::string name) { this->name = name; }
 	std::string getName() { return this->name; }
 	bool operator==(Artist& rhs);
-private:
 	std::string name;
+private:
 };
 

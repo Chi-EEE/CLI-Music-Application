@@ -34,11 +34,12 @@ namespace C00261172_Music_Application.Application
                         Console.Write(" | ");
                         Console.Write("Y");
                     }
-                    Console.Write("]");
+                    Console.WriteLine("]");
                 }
-                ConsoleKeyInfo cki = Console.ReadKey();
+                ConsoleKeyInfo cki = Console.ReadKey(true);
                 switch (cki.Key)
                 {
+                    case ConsoleKey.N:
                     case ConsoleKey.LeftArrow:
                         if (yes)
                         {
@@ -46,6 +47,7 @@ namespace C00261172_Music_Application.Application
                             yes = false;
                         }
                         break;
+                    case ConsoleKey.Y:
                     case ConsoleKey.RightArrow:
                         if (!yes)
                         {
@@ -76,7 +78,7 @@ namespace C00261172_Music_Application.Application
                 catch (Exception _)
                 {
                     Console.Write("Please enter a valid number.");
-                    Console.ReadKey();
+                    Console.ReadKey(true);
                 }
             }
         }
@@ -95,7 +97,7 @@ namespace C00261172_Music_Application.Application
                 catch (Exception _)
                 {
                     Console.Write("Please enter a valid text.");
-                    Console.ReadKey();
+                    Console.ReadKey(true);
                 }
             }
         }
@@ -139,7 +141,7 @@ namespace C00261172_Music_Application.Application
                     break;
                 }
                 DisplayAudioDetails(selectedAudio, index);
-                selectedAudio = AudioLibrary.getNextMusic();
+                selectedAudio = AudioLibrary.GetNextMusic();
             } while (firstSelectedAudio != selectedAudio);
             Console.Write(LINE);
         }
@@ -191,7 +193,7 @@ namespace C00261172_Music_Application.Application
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("- Audio Created: " + newAudio.Name);
                 ResetConsoleColor();
-                Console.ReadKey();
+                Console.ReadKey(true);
                 Changed = true;
             }
         }
@@ -213,7 +215,7 @@ namespace C00261172_Music_Application.Application
                     BuildScreen();
                     BuildMenu(selectedOption);
                 }
-                ConsoleKeyInfo cki = Console.ReadKey();
+                ConsoleKeyInfo cki = Console.ReadKey(true);
                 switch (cki.Key)
                 {
                     case ConsoleKey.UpArrow:
@@ -242,6 +244,7 @@ namespace C00261172_Music_Application.Application
                 }
             }
         }
+
         // Color: https://stackoverflow.com/questions/7937256/custom-text-color-in-c-sharp-console-application
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleMode(IntPtr hConsoleHandle, int mode);

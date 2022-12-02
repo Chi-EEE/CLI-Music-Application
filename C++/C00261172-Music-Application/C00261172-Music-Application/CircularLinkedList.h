@@ -1,42 +1,24 @@
 #pragma once
 #include <memory>
-#include <iterator>
-#include <cstddef>
 #include "DoubleLinkedNode.h"
 template <class T>
 class CircularLinkedList
 {
 public:
-	CircularLinkedList() {
-
-	}
-	CircularLinkedList(CircularLinkedList<T>* circularLinkedList) {
-		DoubleLinkedNode<T>* temp = circularLinkedList->getHead().get();
-		while (temp != nullptr) {
-			this->insert(temp->data);
-			temp = temp->next.get();
-		}
-	}
-	~CircularLinkedList() {
-		this->head = nullptr;
-		this->tail = nullptr;
-	}
-
-	void insert(T data);
-	T removeTail();
-	T removeHead();
+	void insert(std::shared_ptr<DoubleLinkedNode<T>> data);
+	bool removeData(std::shared_ptr<T> data);
 	std::shared_ptr<DoubleLinkedNode<T>> getHead() { return this->head; }
 	std::shared_ptr<DoubleLinkedNode<T>> getTail() { return this->tail; }
 
-	int getSize() { return this->size; }
+	int getSize() { return this->count; }
 private:
 	std::shared_ptr<DoubleLinkedNode<T>> head = nullptr;
 	std::shared_ptr<DoubleLinkedNode<T>> tail = nullptr;
-	int size = 0;
+	int count = 0;
 };
 
 template<class T>
-inline void CircularLinkedList<T>::insert(T data)
+inline void CircularLinkedList<T>::insert(std::shared_ptr<DoubleLinkedNode<T>> data)
 {
 	std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data, this->tail, this->head));
 	if (this->tail != nullptr) {
@@ -46,45 +28,31 @@ inline void CircularLinkedList<T>::insert(T data)
 		this->head = node;
 	}
 	this->tail = node;
-	this->size++;
+	this->count++;
 }
 
 template<class T>
-inline T CircularLinkedList<T>::removeTail()
+inline bool CircularLinkedList<T>::removeData(std::shared_ptr<T> data)
 {
-	if (this->size <= 0) {
-		DoubleLinkedNode<T>* previousTail = this->tail.get();
-		if (previousTail != nullptr) {
-			this->size--;
-			if (previousTail->prev != nullptr) {
-				previousTail->prev->next = previousTail->next;
+	if (this->count > 0) {
+		std::shared_ptr<DoubleLinkedNode<T>> temp = this->head;
+		do {
+			if (temp.get()->data == data) {
+				if (this->count == 1)
+				{
+					this->head = nullptr;
+					this->tail = nullptr;
+				}
+				else
+				{
+					temp.get()->next.get()->prev = temp.get()->next;
+					temp.get()->prev.get()->next = temp.get()->prev;
+				}
+				this->count--;
+				return true;
 			}
-			if (previousTail->next != nullptr) {
-				previousTail->next->prev = previousTail->prev;
-			}
-			this->tail = previousTail->prev;
-			return previousTail->data;
-		}
+		} while (temp != this->tail);
 	}
-	return NULL;
+	return false;
 }
 
-template<class T>
-inline T CircularLinkedList<T>::removeHead()
-{
-	if (this->size <= 0) {
-		DoubleLinkedNode<T>* previousHead = this->head.get();
-		if (previousHead != nullptr) {
-			this->size--;
-			if (previousHead->prev != nullptr) {
-				previousHead->prev->next = previousHead->next;
-			}
-			if (previousHead->next != nullptr) {
-				previousHead->next->prev = previousHead->prev;
-			}
-			this->head = previousHead->next;
-			return previousHead->data;
-		}
-	}
-	return NULL;
-}

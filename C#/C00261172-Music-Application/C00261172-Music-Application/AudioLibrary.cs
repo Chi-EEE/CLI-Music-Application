@@ -11,7 +11,7 @@ namespace C00261172_Music_Application.Application
     {
         public void AddMusic(Audio audio)
         {
-            audioList.Insert(audio);
+            AudioList.Insert(audio);
         }
         public CircularLinkedList<Audio> getShuffledMusicList()
         {

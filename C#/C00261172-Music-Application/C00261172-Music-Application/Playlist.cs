@@ -14,7 +14,7 @@ namespace C00261172_Music_Application.Application
         }
         void AddAudio(Audio audio)
         {
-            audioList.Insert(audio);
+            AudioList.Insert(audio);
         }
         public string Name { get; set; }
     }
