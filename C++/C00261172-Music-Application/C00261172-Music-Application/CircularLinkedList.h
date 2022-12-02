@@ -5,7 +5,7 @@ template <class T>
 class CircularLinkedList
 {
 public:
-	void insert(std::shared_ptr<DoubleLinkedNode<T>> data);
+	void insert(std::shared_ptr<T> data);
 	bool removeData(std::shared_ptr<T> data);
 	std::shared_ptr<DoubleLinkedNode<T>> getHead() { return this->head; }
 	std::shared_ptr<DoubleLinkedNode<T>> getTail() { return this->tail; }
@@ -18,7 +18,7 @@ private:
 };
 
 template<class T>
-inline void CircularLinkedList<T>::insert(std::shared_ptr<DoubleLinkedNode<T>> data)
+inline void CircularLinkedList<T>::insert(std::shared_ptr<T> data)
 {
 	std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data, this->tail, this->head));
 	if (this->tail != nullptr) {

@@ -3,7 +3,7 @@
 std::shared_ptr<Audio> SelectableAudioList::getSelectedAudio()
 {
     if (this->selectedAudio == nullptr) {
-        //this->selectedAudio = this->audioList.getHead();
+        this->selectedAudio = this->audioList.getHead();
         return this->selectedAudio.get()->data;
     }
     return nullptr;
@@ -12,7 +12,7 @@ std::shared_ptr<Audio> SelectableAudioList::getSelectedAudio()
 std::shared_ptr<Audio> SelectableAudioList::getNextSelectedAudio()
 {
     if (this->selectedAudio == nullptr) {
-        //this->selectedAudio = this->audioList.getHead();
+        this->selectedAudio = this->audioList.getHead();
         return this->selectedAudio.get()->data;
     }
     this->selectedAudio = this->selectedAudio.get()->next;

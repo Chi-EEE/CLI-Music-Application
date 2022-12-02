@@ -2,5 +2,5 @@
 
 void AudioLibrary::addAudio(Audio audio)
 {
-	//this->audioList.insert(audio);
+	this->audioList.insert(std::make_shared<Audio>(audio));
 }
