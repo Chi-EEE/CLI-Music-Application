@@ -20,8 +20,11 @@ public:
     void run();
     void buildScreen();
     void buildMenu(int selectedOption);
-    void addAudio(); 
+    void displayAudioDetails(Audio* audio, int index);
+    void addAudio();
     bool YesOrNo(std::string question);
+    std::string EnterConsoleString(std::string statement);
+    int EnterConsoleInt(std::string statement);
     int keyPress();
     void setConsoleColor(int color);
     void resetConsoleColor();

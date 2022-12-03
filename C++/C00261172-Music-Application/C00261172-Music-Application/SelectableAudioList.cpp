@@ -9,9 +9,6 @@ std::shared_ptr<Audio> SelectableAudioList::getSelectedAudio()
 			return nullptr;
 		}
 		std::shared_ptr<Audio> audio = audioNode->data;
-		if (audio.get() == nullptr) {
-			return nullptr;
-		}
 		return audio;
 	}
 	return nullptr;
@@ -24,7 +21,12 @@ std::shared_ptr<Audio> SelectableAudioList::getNextSelectedAudio()
 		return this->selectedAudio.get()->data;
 	}
 	this->selectedAudio = this->selectedAudio.get()->next;
-	return this->selectedAudio.get()->data;
+	DoubleLinkedNode<Audio>* audioNode = this->selectedAudio.get();
+	if (audioNode == nullptr) {
+		return nullptr;
+	}
+	std::shared_ptr<Audio> audio = audioNode->data;
+	return audio;
 }
 
 std::shared_ptr<Audio> SelectableAudioList::removeSelectedAudio()

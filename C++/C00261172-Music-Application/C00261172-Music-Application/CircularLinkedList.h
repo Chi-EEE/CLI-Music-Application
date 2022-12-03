@@ -10,7 +10,7 @@ public:
 	std::shared_ptr<DoubleLinkedNode<T>> getHead() { return this->head; }
 	std::shared_ptr<DoubleLinkedNode<T>> getTail() { return this->tail; }
 
-	int getSize() { return this->count; }
+	int getCount() { return this->count; }
 private:
 	std::shared_ptr<DoubleLinkedNode<T>> head = nullptr;
 	std::shared_ptr<DoubleLinkedNode<T>> tail = nullptr;

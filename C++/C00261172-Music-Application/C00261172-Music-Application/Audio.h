@@ -1,10 +1,11 @@
 #pragma once
+#include <memory>
 #include <string>
 #include "Artist.h"
 class Audio
 {
 public:
-	Audio(std::string name, std::string description, float duration, Artist artist) {
+	Audio(std::string name, std::string description, float duration, std::shared_ptr<Artist> artist) {
 		this->name = name;
 		this->description = description;
 		this->duration = duration;
@@ -13,7 +14,7 @@ public:
 	void setName(std::string name) { this->name = name; }
 	std::string getName() { return this->name; }
 	std::string getDescription() { return this->description; }
-	Artist getArtist() { return this->artist; }
+	std::shared_ptr<Artist> getArtist() { return this->artist; }
 	float getDuration() { return this->duration; }
 
 	inline bool operator==(Audio& rhs) {
@@ -23,6 +24,6 @@ public:
 private:
 	std::string name;
 	std::string description;
-	Artist artist;
+	std::shared_ptr<Artist> artist;
 	float duration;
 };

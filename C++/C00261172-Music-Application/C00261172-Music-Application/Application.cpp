@@ -1,4 +1,4 @@
-#include "Application.h"
+﻿#include "Application.h"
 
 Application::Application()
 {
@@ -18,6 +18,7 @@ void Application::run()
 			buildScreen();
 			buildMenu(selectedOption);
 		}
+		std::cout << audioLibrary.getAudioCount() << "=count\n";
 		wchar_t cki = keyPress();
 		switch (cki)
 		{
@@ -75,7 +76,7 @@ void Application::buildScreen()
 			std::cout << "  [No Audio found]\n";
 			break;
 		}
-		//DisplayAudioDetails(selectedAudio, index);
+		displayAudioDetails(selectedAudio.get(), index);
 		selectedAudio = this->audioLibrary.getNextSelectedAudio();
 	} while (firstSelectedAudio != selectedAudio);
 	std::cout << LINE << "\n";
@@ -97,33 +98,58 @@ void Application::buildMenu(int selectedOption)
 	}
 }
 
+void Application::displayAudioDetails(Audio *audio, int index)
+{
+	setConsoleColor(12);
+	bool selected = (audio == audioLibrary.getNextSelectedAudio().get());
+	if (selected)
+	{
+		std::cout << "V ";
+	}
+	else
+	{
+		std::cout << "> ";
+	}
+	std::cout << '[' << index << "] Audio Name: " << audio->getName();
+	resetConsoleColor();
+	if (selected)
+	{
+		Artist* artist = audio->getArtist().get();
+		if (artist != nullptr)
+		{
+			std::cout << "  Artist Name: " << artist->getName() << '\n';
+		}
+		std::cout << "  Duration: " << audio->getDuration() << '\n';
+		std::cout << "  Description: \n   -" << audio->getDescription() << '\n';
+	}
+}
+
 void Application::addAudio()
 {
 	bool addAudio = YesOrNo("Would you like to add a Audio file?");
 	if (addAudio)
 	{
-		/*string name = EnterConsoleString("Please enter the Audio's Name:");
+		std::string name = EnterConsoleString("Please enter the Audio's Name:");
 
-		string description = EnterConsoleString("Please enter the Audio's Description:");
+		std::string description = EnterConsoleString("Please enter the Audio's Description:");
 
 		int duration = EnterConsoleInt("Please enter the Audio's Duration:");
 
 		bool addArtist = YesOrNo("Do you want to add an Artist to this Audio?:");
 
-		Artist ? artist = null;
+		std::shared_ptr<Artist> artist = nullptr;
 		if (addArtist)
 		{
-			string artistName = EnterConsoleString("Please enter the Artist's Name:");
-			artist = new(artistName);
+			std::string artistName = EnterConsoleString("Please enter the Artist's Name:");
+			artist = std::make_shared<Artist>(artistName);
 		}
-		Audio newAudio = new(name, description, duration, artist);
-		AudioLibrary.AddMusic(newAudio);
-		BuildScreen();
-		Console.ForegroundColor = ConsoleColor.Green;
-		Console.WriteLine("- Audio Created: " + newAudio.Name);
-		ResetConsoleColor();
-		Console.ReadKey(true);
-		Changed = true;*/
+		Audio newAudio = Audio(name, description, duration, artist);
+		audioLibrary.addAudio(newAudio);
+		buildScreen();
+		setConsoleColor(GREEN);
+		std::cout << "- Audio Created: " << newAudio.getName() << '\n';
+		resetConsoleColor();
+		std::cin.ignore();
 	}
 }
 
@@ -181,6 +207,35 @@ bool Application::YesOrNo(std::string question)
 		}
 	}
 }
+
+// To fix if null
+std::string Application::EnterConsoleString(std::string statement)
+{
+	changed = true;
+	while (true)
+	{
+		buildScreen();
+		std::cout << statement << "\n> ";
+		std::string input;
+		std::cin >> input;
+		return input;
+	}
+}
+
+// To fix if string
+int Application::EnterConsoleInt(std::string statement)
+{
+	changed = true;
+	while (true)
+	{
+		buildScreen();
+		std::cout << statement << "\n> ";
+		int input;
+		std::cin >> input;
+		return input;
+	}
+}
+
 
 // https://stackoverflow.com/a/55918450
 int Application::keyPress()
