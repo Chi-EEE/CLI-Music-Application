@@ -134,6 +134,7 @@
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="AudioLibrary.h" />
     <ClInclude Include="CharacterHelper.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="SelectableAudioList.h" />
     <ClInclude Include="Playlist.h" />
     <ClInclude Include="Audio.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="DoubleLinkedNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AudioLibrary.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Playlist.cpp" />
     <ClCompile Include="SelectableAudioList.cpp" />
     <ClCompile Include="Audio.cpp" />

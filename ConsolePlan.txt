@@ -15,4 +15,27 @@ V My Audio Files:
 [1] Remove Audio
 
 > My Audio Files [ ... ]
+> Actions [ ... 
+
+Controls
+
+Tab Button:
+swap to different menu
+> My Audio Files [ ... ]
+V Actions [ 
+	...
+]
+
+V My Audio Files [ 
+	...
+]
 > Actions [ ... ]
+
+Escape Button:
+once you click it, it closes the menu and you are able to use arrow keys to s
+> My Audio Files [ ... ]
+> Actions [ ... ]
+
+Enter Button:
+Choose option in menu and enter it
+

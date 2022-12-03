@@ -259,39 +259,3 @@ int Application::EnterConsoleInt(std::string statement)
 		}
 	}
 }
-
-/// <summary>
-/// Source: https://stackoverflow.com/a/55918450
-/// </summary>
-/// <param name="keyCode">The code of the Key pressed</param>
-/// <returns>Whether it is a function key or an arrow key</returns>
-bool Application::KeyPress(int& keyCode)
-{
-	keyCode = _getch();  //Will return '0'
-	if (keyCode != 0x00 && keyCode != 0xE0) {
-		return false;
-	}
-	keyCode = _getch();
-	return true;
-}
-
-void Application::setConsoleColor(int color) {
-	SetConsoleTextAttribute(hConsole, color);
-}
-
-void Application::resetConsoleColor() {
-	SetConsoleTextAttribute(hConsole, WHITE);
-}
-
-// https://stackoverflow.com/a/52895729
-void Application::clear() {
-#if defined _WIN32
-	system("cls");
-	//clrscr(); // including header file : conio.h
-#elif defined (__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
-	system("clear");
-	//std::cout<< u8"\033[2J\033[1;1H"; //Using ANSI Escape Sequences 
-#elif defined (__APPLE__)
-	system("clear");
-#endif
-}

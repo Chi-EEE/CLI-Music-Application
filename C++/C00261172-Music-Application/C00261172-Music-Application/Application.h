@@ -31,13 +31,7 @@ public:
     bool YesOrNo(std::string question);
     std::string EnterConsoleString(std::string statement);
     int EnterConsoleInt(std::string statement);
-    bool KeyPress(int& keyCode);
-    void setConsoleColor(int color);
-    void resetConsoleColor();
-    void clear();
 private:
-    HANDLE hConsole; // Console window
-
     AudioLibrary audioLibrary;
     bool changed = true;
     const std::string LINE = "=======================================================================================================================\n";
