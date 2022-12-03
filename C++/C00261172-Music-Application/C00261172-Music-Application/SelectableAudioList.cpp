@@ -11,7 +11,7 @@ std::shared_ptr<Audio> SelectableAudioList::getSelectedAudio()
 		std::shared_ptr<Audio> audio = audioNode->data;
 		return audio;
 	}
-	return nullptr;
+	return this->selectedAudio.get()->data;
 }
 
 std::shared_ptr<Audio> SelectableAudioList::getNextSelectedAudio()
