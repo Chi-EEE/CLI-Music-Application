@@ -4,10 +4,16 @@
 
 #include <map> // For Menu
 
+// HANDLE
 #include <windows.h>
 
+// _getch
 #include <stdio.h>
 #include <conio.h>
+
+// std::streamsize>::max()
+#include <sstream>
+#include <limits>
 
 #include "Colour.h"
 
@@ -25,7 +31,7 @@ public:
     bool YesOrNo(std::string question);
     std::string EnterConsoleString(std::string statement);
     int EnterConsoleInt(std::string statement);
-    int keyPress();
+    bool KeyPress(int& keyCode);
     void setConsoleColor(int color);
     void resetConsoleColor();
     void clear();

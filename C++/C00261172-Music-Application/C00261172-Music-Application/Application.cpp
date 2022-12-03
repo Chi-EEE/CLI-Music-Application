@@ -18,22 +18,22 @@ void Application::run()
 			buildScreen();
 			buildMenu(selectedOption);
 		}
-		std::cout << audioLibrary.getAudioCount() << "=count\n";
-		wchar_t cki = keyPress();
-		switch (cki)
+		int keyCode;
+		bool isArrowKey = KeyPress(keyCode);
+		switch (keyCode)
 		{
-		case 0x48:
+		case 0x48: // Up
 		{
-			if (selectedOption > 0)
+			if (isArrowKey && selectedOption > 0)
 			{
 				this->changed = true;
 				selectedOption--;
 			}
 			break;
 		}
-		case 0x50:
+		case 0x50: // Down
 		{
-			if (selectedOption < menuOptions.size() - 1)
+			if (isArrowKey && selectedOption < menuOptions.size() - 1)
 			{
 				this->changed = true;
 				selectedOption++;
@@ -65,7 +65,7 @@ void Application::run()
 void Application::buildScreen()
 {
 	clear();
-	std::cout << "My Audio Files: \n" << LINE << "\n";
+	std::cout << "My Audio Files: \n" << LINE;
 	std::shared_ptr<Audio> firstSelectedAudio = this->audioLibrary.getSelectedAudio();
 	std::shared_ptr<Audio> selectedAudio = firstSelectedAudio;
 	int index = 1;
@@ -79,7 +79,7 @@ void Application::buildScreen()
 		displayAudioDetails(selectedAudio.get(), index);
 		selectedAudio = this->audioLibrary.getNextSelectedAudio();
 	} while (firstSelectedAudio != selectedAudio);
-	std::cout << LINE << "\n";
+	std::cout << LINE;
 }
 
 void Application::buildMenu(int selectedOption)
@@ -98,9 +98,9 @@ void Application::buildMenu(int selectedOption)
 	}
 }
 
-void Application::displayAudioDetails(Audio *audio, int index)
+void Application::displayAudioDetails(Audio* audio, int index)
 {
-	setConsoleColor(12);
+	setConsoleColor(BLUE);
 	bool selected = (audio == audioLibrary.getNextSelectedAudio().get());
 	if (selected)
 	{
@@ -110,7 +110,7 @@ void Application::displayAudioDetails(Audio *audio, int index)
 	{
 		std::cout << "> ";
 	}
-	std::cout << '[' << index << "] Audio Name: " << audio->getName();
+	std::cout << '[' << index << "] Audio Name: " << audio->getName() << '\n';
 	resetConsoleColor();
 	if (selected)
 	{
@@ -166,49 +166,51 @@ bool Application::YesOrNo(std::string question)
 			std::cout << question << "\n[";
 			if (yes)
 			{
-				std::cout << "N|";
+				std::cout << "N |";
 				setConsoleColor(CYAN);
-				std::cout << "Y";
+				std::cout << " Y";
 				resetConsoleColor();
 			}
 			else
 			{
 				setConsoleColor(CYAN);
-				std::cout << "N";
+				std::cout << "N ";
 				resetConsoleColor();
-				std::cout << "|Y";
+				std::cout << "| Y";
 			}
 			std::cout << "]\n";
 		}
-		wchar_t cki = keyPress();
-		switch (cki)
-		{
-		case 0x4E: // N
-		case 0x4B: // Left
-			if (yes)
+		int keyCode;
+		bool isArrowKey = KeyPress(keyCode);
+		if (isArrowKey) {
+			switch (keyCode)
 			{
-				changed = true;
-				yes = false;
+			case 0x4E: // N
+			case 0x4B: // Left
+				if (yes)
+				{
+					changed = true;
+					yes = false;
+				}
+				break;
+			case 0x59: // Y
+			case 0x4D: // Right
+				if (!yes)
+				{
+					changed = true;
+					yes = true;
+				}
+				break;
+			default:
+				break;
 			}
-			break;
-		case 0x59: // Y
-		case 0x4D: // Right
-			if (!yes)
-			{
-				changed = true;
-				yes = true;
-			}
-			break;
-		case VK_RETURN:
+		}
+		else if (keyCode == VK_RETURN) {
 			return yes;
-		default:
-			std::cout << "\b \b";
-			break;
 		}
 	}
 }
 
-// To fix if null
 std::string Application::EnterConsoleString(std::string statement)
 {
 	changed = true;
@@ -218,11 +220,22 @@ std::string Application::EnterConsoleString(std::string statement)
 		std::cout << statement << "\n> ";
 		std::string input;
 		std::cin >> input;
-		return input;
+		// https://stackoverflow.com/a/59690824
+		if (std::cin.fail()) {
+			std::cin.clear();
+#pragma push_macro("max")
+#undef max
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //skip bad input
+#pragma pop_macro("max")
+			std::cout << "Please enter a valid string.\n";
+			_getch();
+		}
+		else {
+			return input;
+		}
 	}
 }
 
-// To fix if string
 int Application::EnterConsoleInt(std::string statement)
 {
 	changed = true;
@@ -232,20 +245,34 @@ int Application::EnterConsoleInt(std::string statement)
 		std::cout << statement << "\n> ";
 		int input;
 		std::cin >> input;
-		return input;
+		if (std::cin.fail()) {
+			std::cin.clear();
+#pragma push_macro("max")
+#undef max
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //skip bad input
+#pragma pop_macro("max")
+			std:: cout << "Please enter a valid number.\n";
+			_getch();
+		}
+		else {
+			return input;
+		}
 	}
 }
 
-
-// https://stackoverflow.com/a/55918450
-int Application::keyPress()
+/// <summary>
+/// Source: https://stackoverflow.com/a/55918450
+/// </summary>
+/// <param name="keyCode">The code of the Key pressed</param>
+/// <returns>Whether it is a function key or an arrow key</returns>
+bool Application::KeyPress(int& keyCode)
 {
-	int ch = _getch();  //Will return '0'
-	if (ch != 0x00 && ch != 0xE0) {
-		return ch;
+	keyCode = _getch();  //Will return '0'
+	if (keyCode != 0x00 && keyCode != 0xE0) {
+		return false;
 	}
-	ch = _getch();
-	return ch;
+	keyCode = _getch();
+	return true;
 }
 
 void Application::setConsoleColor(int color) {
