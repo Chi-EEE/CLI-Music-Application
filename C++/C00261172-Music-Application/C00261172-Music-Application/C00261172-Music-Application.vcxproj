@@ -133,6 +133,7 @@
     <ClInclude Include="Colour.h" />
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="AudioLibrary.h" />
+    <ClInclude Include="CharacterHelper.h" />
     <ClInclude Include="SelectableAudioList.h" />
     <ClInclude Include="Playlist.h" />
     <ClInclude Include="Audio.h" />
