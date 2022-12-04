@@ -7,12 +7,13 @@ Application::Application()
 
 void Application::run()
 {
-	std::pair<std::string, void()>a(std::string("HELLO"), this->addAudio); // TO FIX
-	Menu menu = Menu("My Audio Files",
-		{
-			
-		}
-	);
+	std::pair<std::string, std::function<void()>>a(std::string("HELLO"), std::bind(&Application::addAudio, this)); // TO FIX
+	std::variant < std::pair<std::string, std::function<void()>>>b(a);
+	std::vector<std::variant < std::pair<std::string, std::function<void()>>>> menuOptions{
+		std::string(""),
+		b
+	};
+	Menu menu = Menu(menuOptions);
 	while (true)
 	{
 		int selectedOption = 0;

@@ -14,6 +14,7 @@
 #include "CircularLinkedList.h"
 #include "AudioLibrary.h"
 
+#include <vector>
 #include <functional>
 
 class Application
