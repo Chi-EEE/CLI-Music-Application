@@ -2,69 +2,74 @@
 
 Application::Application()
 {
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	menuOptions["Add Audio"] = &Application::addAudio;
 }
 
 void Application::run()
 {
-	int selectedOption = 0;
+	std::pair<std::string, void()>a(std::string("HELLO"), this->addAudio); // TO FIX
+	Menu menu = Menu("My Audio Files",
+		{
+			
+		}
+	);
 	while (true)
 	{
-		if (this->changed)
-		{
-			this->changed = false;
-			buildScreen();
-			buildMenu(selectedOption);
-		}
-		int keyCode;
-		bool isArrowKey = KeyPress(keyCode);
-		switch (keyCode)
-		{
-		case 0x48: // Up
-		{
-			if (isArrowKey && selectedOption > 0)
-			{
-				this->changed = true;
-				selectedOption--;
-			}
-			break;
-		}
-		case 0x50: // Down
-		{
-			if (isArrowKey && selectedOption < menuOptions.size() - 1)
-			{
-				this->changed = true;
-				selectedOption++;
-			}
-			break;
-		}
-		case VK_RETURN:
-		{
-			auto it = menuOptions.begin();
-			std::advance(it, selectedOption);
-			(this->*(it->second))();
-			break;
-		}
-		case VK_TAB:
-		{
-			std::cout << "\b \b";
-			break;
-		}
-		default:
-		{
-			std::cout << "\b \b";
-			break;
-		}
-		break;
-		}
+		int selectedOption = 0;
+		MenuExitResult result = menu.listen();
+		//if (this->changed)
+		//{
+		//	this->changed = false;
+		//	buildScreen();
+		//	buildMenu(selectedOption);
+		//}
+		//int keyCode;
+		//bool isArrowKey = KeyPress(keyCode);
+		//switch (keyCode)
+		//{
+		//case 0x48: // Up
+		//{
+		//	if (isArrowKey && selectedOption > 0)
+		//	{
+		//		this->changed = true;
+		//		selectedOption--;
+		//	}
+		//	break;
+		//}
+		//case 0x50: // Down
+		//{
+		//	if (isArrowKey && selectedOption < menuOptions.size() - 1)
+		//	{
+		//		this->changed = true;
+		//		selectedOption++;
+		//	}
+		//	break;
+		//}
+		//case VK_RETURN:
+		//{
+		//	auto it = menuOptions.begin();
+		//	std::advance(it, selectedOption);
+		//	(this->*(it->second))();
+		//	break;
+		//}
+		//case VK_TAB:
+		//{
+		//	std::cout << "\b \b";
+		//	break;
+		//}
+		//default:
+		//{
+		//	std::cout << "\b \b";
+		//	break;
+		//}
+		//break;
+		//}
 	}
 }
 
 void Application::buildScreen()
 {
-	clear();
+	Console::getInstance()->clearConsole();
 	std::cout << "My Audio Files: \n" << LINE;
 	std::shared_ptr<Audio> firstSelectedAudio = this->audioLibrary.getSelectedAudio();
 	std::shared_ptr<Audio> selectedAudio = firstSelectedAudio;
@@ -89,9 +94,9 @@ void Application::buildMenu(int selectedOption)
 	for (const auto& option : menuOptions) {
 		if (i == selectedOption)
 		{
-			setConsoleColor(CYAN);
+			Console::getInstance()->setConsoleColor(CYAN);
 			std::cout << "-> ";
-			resetConsoleColor();
+			Console::getInstance()->resetConsoleColor();
 		}
 		std::cout << '[' << i << "] " << option.first << '\n';
 		i++;
@@ -100,7 +105,7 @@ void Application::buildMenu(int selectedOption)
 
 void Application::displayAudioDetails(Audio* audio, int index)
 {
-	setConsoleColor(BLUE);
+	Console::getInstance()->setConsoleColor(BLUE);
 	bool selected = (audio == audioLibrary.getNextSelectedAudio().get());
 	if (selected)
 	{
@@ -111,7 +116,7 @@ void Application::displayAudioDetails(Audio* audio, int index)
 		std::cout << "> ";
 	}
 	std::cout << '[' << index << "] Audio Name: " << audio->getName() << '\n';
-	resetConsoleColor();
+	Console::getInstance()->resetConsoleColor();
 	if (selected)
 	{
 		Artist* artist = audio->getArtist().get();
@@ -146,9 +151,9 @@ void Application::addAudio()
 		Audio newAudio = Audio(name, description, duration, artist);
 		audioLibrary.addAudio(newAudio);
 		buildScreen();
-		setConsoleColor(GREEN);
+		Console::getInstance()->setConsoleColor(GREEN);
 		std::cout << "- Audio Created: " << newAudio.getName() << '\n';
-		resetConsoleColor();
+		Console::getInstance()->resetConsoleColor();
 		std::cin.ignore();
 	}
 }
@@ -167,21 +172,21 @@ bool Application::YesOrNo(std::string question)
 			if (yes)
 			{
 				std::cout << "N |";
-				setConsoleColor(CYAN);
+				Console::getInstance()->setConsoleColor(CYAN);
 				std::cout << " Y";
-				resetConsoleColor();
+				Console::getInstance()->resetConsoleColor();
 			}
 			else
 			{
-				setConsoleColor(CYAN);
+				Console::getInstance()->setConsoleColor(CYAN);
 				std::cout << "N ";
-				resetConsoleColor();
+				Console::getInstance()->resetConsoleColor();
 				std::cout << "| Y";
 			}
 			std::cout << "]\n";
 		}
 		int keyCode;
-		bool isArrowKey = KeyPress(keyCode);
+		bool isArrowKey = Console::getInstance()->getKey(keyCode);
 		if (isArrowKey) {
 			switch (keyCode)
 			{
@@ -251,7 +256,7 @@ int Application::EnterConsoleInt(std::string statement)
 #undef max
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //skip bad input
 #pragma pop_macro("max")
-			std:: cout << "Please enter a valid number.\n";
+			std::cout << "Please enter a valid number.\n";
 			_getch();
 		}
 		else {

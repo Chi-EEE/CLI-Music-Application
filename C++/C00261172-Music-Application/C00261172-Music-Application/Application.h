@@ -4,21 +4,18 @@
 
 #include <map> // For Menu
 
-// HANDLE
-#include <windows.h>
+#include "Console.h"
+#include <windows.h> // Virtual Key
 
-// _getch
-#include <stdio.h>
-#include <conio.h>
-
-// std::streamsize>::max()
-#include <sstream>
-#include <limits>
+#include "Menu.h"
 
 #include "Colour.h"
 
 #include "CircularLinkedList.h"
 #include "AudioLibrary.h"
+
+#include <functional>
+
 class Application
 {
 public:

@@ -3,21 +3,25 @@
 #include <vector> // vector
 #include <string> // string
 
-#include "Console.hpp"
+#include "Console.h"
 #include <windows.h> // Virtual Key
+
+#include <memory>
+#include <variant>
+#include <functional>
 
 class Menu
 {
 public:
-    Menu(std::vector<std::string> options);
-    enum MenuExitResult listen(int& selectedOption);
+	Menu(std::string heading, std::vector<std::variant<std::pair<std::string, std::function<void()>>, std::shared_ptr<Menu>>> options);
+	enum MenuExitResult listen();
 private:
-    std::string heading;
-    std::vector<std::string> options;
+	std::string heading;
+	std::vector<std::variant<std::pair<std::string, std::function<void()>>, std::shared_ptr<Menu>>> options;
 };
 
 enum MenuExitResult {
-    ENTER,
-    ESCAPE,
-    TAB
+	ENTER,
+	ESCAPE,
+	TAB
 };

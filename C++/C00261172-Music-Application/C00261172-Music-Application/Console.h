@@ -70,4 +70,3 @@ private:
 	}
 	HANDLE hConsole; // Console window
 };
-Console* Console::instance = new Console();

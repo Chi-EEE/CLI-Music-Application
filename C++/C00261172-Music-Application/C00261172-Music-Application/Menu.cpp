@@ -1,19 +1,21 @@
 #include "Menu.h"
 
-Menu::Menu(std::vector<std::string> options)
+Menu::Menu(std::string heading, std::vector<std::variant<std::pair<std::string, std::function<void()>>, std::shared_ptr<Menu>>> options)
 {
+	this->heading = heading;
 	this->options = options;
 };
 
-MenuExitResult Menu::listen(int& selectedOption)
+MenuExitResult Menu::listen()
 {
+	int selectedOption = 0;
 	bool changed = true;
 	while (true)
 	{
 		if (changed)
 		{
 			changed = false;
-			for (int i = 0; i < options.size(); i++) 
+			for (int i = 0; i < options.size(); i++)
 			{
 				if (i == selectedOption)
 				{
@@ -21,7 +23,17 @@ MenuExitResult Menu::listen(int& selectedOption)
 					std::cout << "-> ";
 					Console::getInstance()->resetConsoleColor();
 				}
-				std::cout << '[' << i << "] " << options[i] << '\n';
+				auto option = options[i];
+				if (std::holds_alternative<std::pair<std::string, std::function<void()>>>(option))
+				{
+					std::pair<std::string, std::function<void()>> heading = std::get<std::pair<std::string, std::function<void()>>>(option);
+					std::cout << '[' << i << "] " << heading.first << '\n';
+				}
+				else if (std::holds_alternative<std::shared_ptr<Menu>>(option))
+				{
+					Menu* subMenu = std::get<std::shared_ptr<Menu>>(option).get();
+					std::cout << "> " << '[' << i << "] " << subMenu->heading << '\n';
+				}
 			}
 			//buildScreen();
 		}
@@ -40,7 +52,7 @@ MenuExitResult Menu::listen(int& selectedOption)
 		}
 		case 0x50: // Down
 		{
-			if (isArrowKey && selectedOption < this->options.size())
+			if (isArrowKey && selectedOption < this->options.size() - 1)
 			{
 				changed = true;
 				selectedOption++;
@@ -49,7 +61,15 @@ MenuExitResult Menu::listen(int& selectedOption)
 		}
 		case VK_ESCAPE:
 		{
-			return MenuExitResult::ESCAPE;
+			auto option = options[selectedOption];
+			if (std::holds_alternative<std::shared_ptr<Menu>>(option))
+			{
+				Menu* subMenu = std::get<std::shared_ptr<Menu>>(option).get();
+				subMenu->listen();
+			}
+			else {
+				return MenuExitResult::ESCAPE;
+			}
 		}
 		case VK_TAB:
 		{
