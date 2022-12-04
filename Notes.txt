@@ -26,3 +26,28 @@ playlist - store all songs in linked list
 song-  store the song name, artist, and duration details.
 
 Use CircularDoubleLinkedList so the user can traverse through the playlist
+
+Use Vector to store SelectedOption
+
+{
+	number selected,
+	menu viewer
+}
+
+Vector:
+{
+	{
+		1,
+		viewMainMenu,
+		handleMainMenu
+	},
+	{
+		0,
+		viewActionMenu,
+		handleActionMenu
+	},
+	{
+		0,
+		???
+	}
+}
