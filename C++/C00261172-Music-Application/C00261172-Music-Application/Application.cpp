@@ -15,13 +15,13 @@ void Application::initaliseMenus()
 	std::shared_ptr<Menu> actionMenu(new Menu);
 	actionMenu->heading = "Perform Actions";
 
-	MenuOption addAudioOption;
-	addAudioOption.heading = "Add Audio";
-	addAudioOption.handle = std::bind(&Application::addAudio, this, std::placeholders::_1, std::placeholders::_2);
+	std::shared_ptr<MenuOption> addAudioOption(new MenuOption);
+	addAudioOption->heading = "Add Audio";
+	addAudioOption->handle = std::bind(&Application::addAudio, this, std::placeholders::_1, std::placeholders::_2);
 
-	MenuOption removeAudioOption;
-	removeAudioOption.heading = "Remove Audio";
-	removeAudioOption.handle = std::bind(&Application::removeAudio, this, std::placeholders::_1, std::placeholders::_2);
+	std::shared_ptr<MenuOption> removeAudioOption(new MenuOption);
+	removeAudioOption->heading = "Remove Audio";
+	removeAudioOption->handle = std::bind(&Application::removeAudio, this, std::placeholders::_1, std::placeholders::_2);
 
 	actionMenu->menuOptions.push_back(addAudioOption);
 	actionMenu->menuOptions.push_back(removeAudioOption);
@@ -59,8 +59,18 @@ void Application::run()
 			}
 		}
 		else {
-			if (std::holds_alternative<MenuOption>(currentMenuOption)) {
-				std::get<MenuOption>(currentMenuOption).handle(keyCode, isArrowKey);
+			if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenuOption)) {
+				bool result = std::get<std::shared_ptr<MenuOption>>(currentMenuOption)->handle(keyCode, isArrowKey);
+				if (!result) {
+					if (this->menuLayers.size() > 1) {
+						if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenuOption)) {
+							std::shared_ptr<Menu> currentMenu = std::get<std::shared_ptr<Menu>>(currentMenuOption);
+							currentMenu->selectedOption = 0;
+						}
+						this->menuLayers.pop_back();
+						this->changed = true;
+					}
+				}
 			}
 			else if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenuOption)) {
 				handleMenu(std::get<std::shared_ptr<Menu>>(currentMenuOption), keyCode, isArrowKey);
@@ -133,9 +143,9 @@ void Application::buildMenu(int layerIndex)
 				std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(currentMenu->menuOptions[i]);
 				std::cout << std::string(layerIndex * 2, ' ') << "> [" << i << "] " << menuOption->heading << '\n';
 			}
-			else if (std::holds_alternative<MenuOption>(currentMenu->menuOptions[i])) {
-				MenuOption menuOption = std::get<MenuOption>(currentMenu->menuOptions[i]);
-				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption.heading << '\n';
+			else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i])) {
+				std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i]);
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n';
 			}
 		}
 		auto selectedMenu = currentMenu->menuOptions[currentMenu->selectedOption];
@@ -153,10 +163,10 @@ void Application::buildMenu(int layerIndex)
 				resetConsoleColor();
 			}
 		}
-		else if (std::holds_alternative<MenuOption>(selectedMenu)) {
-			MenuOption menuOption = std::get<MenuOption>(selectedMenu);
+		else if (std::holds_alternative<std::shared_ptr<MenuOption>>(selectedMenu)) {
+			std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(selectedMenu);
 			setConsoleColor(CYAN);
-			std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption.heading << '\n';
+			std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
 			resetConsoleColor();
 		}
 		for (int i = currentMenu->selectedOption + 1; i < currentMenu->menuOptions.size(); i++) {
@@ -164,9 +174,9 @@ void Application::buildMenu(int layerIndex)
 				std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(currentMenu->menuOptions[i]);
 				std::cout << std::string(layerIndex * 2, ' ') << "> [" << i << "] " << menuOption->heading << '\n';
 			}
-			else if (std::holds_alternative<MenuOption>(currentMenu->menuOptions[i])) {
-				MenuOption menuOption = std::get<MenuOption>(currentMenu->menuOptions[i]);
-				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption.heading << '\n';
+			else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i])) {
+				std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i]);
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n';
 			}
 		}
 	}
@@ -199,8 +209,16 @@ void Application::displayAudioDetails(Audio* audio, int index)
 	}
 }
 
-void Application::addAudio(int keyCode, bool isArrowKey)
+bool Application::addAudio(std::shared_ptr<MenuOption> menuOption, int keyCode, bool isArrowKey)
 {
+	switch (menuOption->stage)
+	{
+	case 0:
+		return true;
+		return false;
+	default:
+		break;
+	}
 	bool addAudio = YesOrNo("Would you like to add a Audio file?", keyCode, isArrowKey);
 	if (addAudio)
 	{
@@ -227,7 +245,7 @@ void Application::addAudio(int keyCode, bool isArrowKey)
 	}
 }
 
-void Application::removeAudio(int keyCode, bool isArrowKey)
+bool Application::removeAudio(int keyCode, bool isArrowKey)
 {
 	bool removeAudio = YesOrNo("Would you like to remove a Audio file?", keyCode, isArrowKey);
 	if (removeAudio)
@@ -248,59 +266,56 @@ bool Application::YesOrNo(std::string question, int keyCode, bool isArrowKey)
 {
 	this->changed = true;
 	bool yes = false;
-	while (true)
+	if (this->changed)
 	{
-		if (changed)
+		this->changed = false;
+		Write(question + "\n[");
+		if (yes)
 		{
-			changed = false;
-			Write(question + "\n[");
+			std::cout << "N |";
+			setConsoleColor(CYAN);
+			std::cout << " Y";
+			resetConsoleColor();
+		}
+		else
+		{
+			setConsoleColor(CYAN);
+			std::cout << "N ";
+			resetConsoleColor();
+			std::cout << "| Y";
+		}
+		std::cout << "]\n";
+	}
+	int keyCode;
+	bool isArrowKey = GetKey(keyCode);
+	if (isArrowKey) {
+		switch (keyCode)
+		{
+		case 0x4E: // N
+		case 0x4B: // Left
 			if (yes)
 			{
-				std::cout << "N |";
-				setConsoleColor(CYAN);
-				std::cout << " Y";
-				resetConsoleColor();
+				changed = true;
+				yes = false;
 			}
-			else
+			break;
+		case 0x59: // Y
+		case 0x4D: // Right
+			if (!yes)
 			{
-				setConsoleColor(CYAN);
-				std::cout << "N ";
-				resetConsoleColor();
-				std::cout << "| Y";
+				changed = true;
+				yes = true;
 			}
-			std::cout << "]\n";
+			break;
+		default:
+			break;
 		}
-		int keyCode;
-		bool isArrowKey = GetKey(keyCode);
-		if (isArrowKey) {
-			switch (keyCode)
-			{
-			case 0x4E: // N
-			case 0x4B: // Left
-				if (yes)
-				{
-					changed = true;
-					yes = false;
-				}
-				break;
-			case 0x59: // Y
-			case 0x4D: // Right
-				if (!yes)
-				{
-					changed = true;
-					yes = true;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		else if (keyCode == VK_RETURN) {
-			return yes;
-		}
-		else if (keyCode == VK_ESCAPE) {
-			return false;
-		}
+	}
+	else if (keyCode == VK_RETURN) {
+		return yes;
+	}
+	else if (keyCode == VK_ESCAPE) {
+		return false;
 	}
 }
 

@@ -3,5 +3,6 @@
 #include <functional>
 struct MenuOption {
 	std::string heading;
-	std::function<void(int, bool)> handle;
+	std::function<bool(int, bool)> handle;
+	short stage = 0;
 };

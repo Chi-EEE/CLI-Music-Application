@@ -9,6 +9,6 @@
 struct Menu
 {
 	std::string heading;
-	std::vector<std::variant<std::shared_ptr<Menu>, MenuOption>> menuOptions;
+	std::vector<std::variant<std::shared_ptr<Menu>, std::shared_ptr<MenuOption>>> menuOptions;
 	int selectedOption = 0;
 };

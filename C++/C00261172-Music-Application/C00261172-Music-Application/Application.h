@@ -38,8 +38,8 @@ private:
 	void handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, bool isArrowKey);
 	void buildMenu(int layerIndex);
 	void displayAudioDetails(Audio* audio, int index);
-	void addAudio(int keyCode, bool isArrowKey);
-	void removeAudio(int keyCode, bool isArrowKey);
+	bool addAudio(int keyCode, bool isArrowKey);
+	bool removeAudio(int keyCode, bool isArrowKey);
 	bool YesOrNo(std::string question, int keyCode, bool isArrowKey);
 	std::string EnterConsoleString(std::string statement);
 	int EnterConsoleInt(std::string statement);
@@ -55,5 +55,5 @@ private:
 	bool changed = true;
 	const std::string LINE = "=======================================================================================================================\n";
 
-	std::vector<std::variant<std::shared_ptr<Menu>, MenuOption>> menuLayers{};
+	std::vector<std::variant<std::shared_ptr<Menu>, std::shared_ptr<MenuOption>>> menuLayers{};
 };
