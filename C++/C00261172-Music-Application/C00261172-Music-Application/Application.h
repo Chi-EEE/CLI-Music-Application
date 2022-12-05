@@ -38,9 +38,9 @@ private:
 	void handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, bool isArrowKey);
 	void buildMenu(int layerIndex);
 	void displayAudioDetails(Audio* audio, int index);
-	void addAudio();
-	void removeAudio();
-	bool YesOrNo(std::string question);
+	void addAudio(int keyCode, bool isArrowKey);
+	void removeAudio(int keyCode, bool isArrowKey);
+	bool YesOrNo(std::string question, int keyCode, bool isArrowKey);
 	std::string EnterConsoleString(std::string statement);
 	int EnterConsoleInt(std::string statement);
 	void Write(std::string message);

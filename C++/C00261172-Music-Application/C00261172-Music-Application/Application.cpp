@@ -17,11 +17,11 @@ void Application::initaliseMenus()
 
 	MenuOption addAudioOption;
 	addAudioOption.heading = "Add Audio";
-	addAudioOption.handle = std::bind(&Application::addAudio, this);
+	addAudioOption.handle = std::bind(&Application::addAudio, this, std::placeholders::_1, std::placeholders::_2);
 
 	MenuOption removeAudioOption;
 	removeAudioOption.heading = "Remove Audio";
-	removeAudioOption.handle = std::bind(&Application::addAudio, this);
+	removeAudioOption.handle = std::bind(&Application::removeAudio, this, std::placeholders::_1, std::placeholders::_2);
 
 	actionMenu->menuOptions.push_back(addAudioOption);
 	actionMenu->menuOptions.push_back(removeAudioOption);
@@ -73,8 +73,11 @@ void Application::handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, boo
 	switch (keyCode)
 	{
 	case 0x48: // Up
+		if (!isArrowKey)
+			break;
+	case 0x77: // W
 	{
-		if (isArrowKey && currentMenu->menuOptions.size() > 0 && currentMenu->selectedOption > 0)
+		if (currentMenu->menuOptions.size() > 0 && currentMenu->selectedOption > 0)
 		{
 			this->changed = true;
 			currentMenu->selectedOption--;
@@ -82,8 +85,11 @@ void Application::handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, boo
 		break;
 	}
 	case 0x50: // Down
+		if (!isArrowKey)
+			break;
+	case 0x73: // S
 	{
-		if (isArrowKey && currentMenu->menuOptions.size() > 0 && currentMenu->selectedOption < currentMenu->menuOptions.size() - 1)
+		if (currentMenu->menuOptions.size() > 0 && currentMenu->selectedOption < currentMenu->menuOptions.size() - 1)
 		{
 			this->changed = true;
 			currentMenu->selectedOption++;
@@ -92,9 +98,11 @@ void Application::handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, boo
 	}
 	case VK_RETURN:
 	{
-		auto selectedMenuOption = currentMenu->menuOptions[currentMenu->selectedOption];
-		this->menuLayers.push_back(selectedMenuOption);
-		this->changed = true;
+		if (currentMenu->menuOptions.size() > 0) {
+			auto selectedMenuOption = currentMenu->menuOptions[currentMenu->selectedOption];
+			this->menuLayers.push_back(selectedMenuOption);
+			this->changed = true;
+		}
 		break;
 	}
 	case VK_TAB:
@@ -191,9 +199,9 @@ void Application::displayAudioDetails(Audio* audio, int index)
 	}
 }
 
-void Application::addAudio()
+void Application::addAudio(int keyCode, bool isArrowKey)
 {
-	bool addAudio = YesOrNo("Would you like to add a Audio file?");
+	bool addAudio = YesOrNo("Would you like to add a Audio file?", keyCode, isArrowKey);
 	if (addAudio)
 	{
 		std::string name = EnterConsoleString("Please enter the Audio's Name:");
@@ -202,7 +210,7 @@ void Application::addAudio()
 
 		int duration = EnterConsoleInt("Please enter the Audio's Duration:");
 
-		bool addArtist = YesOrNo("Do you want to add an Artist to this Audio?:");
+		bool addArtist = YesOrNo("Do you want to add an Artist to this Audio?:", keyCode, isArrowKey);
 
 		std::shared_ptr<Artist> artist = nullptr;
 		if (addArtist)
@@ -219,9 +227,9 @@ void Application::addAudio()
 	}
 }
 
-void Application::removeAudio()
+void Application::removeAudio(int keyCode, bool isArrowKey)
 {
-	bool removeAudio = YesOrNo("Would you like to remove a Audio file?");
+	bool removeAudio = YesOrNo("Would you like to remove a Audio file?", keyCode, isArrowKey);
 	if (removeAudio)
 	{
 		std::string name = EnterConsoleString("Please enter the Audio's Name:");
@@ -236,7 +244,7 @@ void Application::removeAudio()
 	}
 }
 
-bool Application::YesOrNo(std::string question)
+bool Application::YesOrNo(std::string question, int keyCode, bool isArrowKey)
 {
 	this->changed = true;
 	bool yes = false;
