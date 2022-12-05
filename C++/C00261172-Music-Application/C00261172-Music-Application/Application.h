@@ -19,21 +19,26 @@
 
 #include <vector>
 
+#include <variant>
+#include <functional>
+
 #include "CircularLinkedList.h"
 #include "AudioLibrary.h"
 
+#include "Menu.h"
+#include "MenuOption.h"
 #include "MenuExitResult.h"
 class Application
 {
 public:
 	Application();
 	void run();
-	void buildMainMenu();
-	void buildAudioMenu(int& selectedOption);
+private:
+	void initaliseMenus();
+	void buildMenu(int layerIndex);
 	void displayAudioDetails(Audio* audio, int index);
-	MenuExitResult handleAudioMenu(int& mainMenuOptionIndex);
 	void addAudio();
-	void removeAudio(); 
+	void removeAudio();
 	bool YesOrNo(std::string question);
 	std::string EnterConsoleString(std::string statement);
 	int EnterConsoleInt(std::string statement);
@@ -42,32 +47,11 @@ public:
 	void setConsoleColor(int color);
 	void resetConsoleColor();
 	void clear();
-private:
 	HANDLE hConsole; // Console window
 
 	AudioLibrary audioLibrary;
 	bool changed = true;
 	const std::string LINE = "=======================================================================================================================\n";
-	
-	int selectedMainOption = 0;
-	bool selectedMainOptionOpened = false;
 
-	int levels = 0;
-	std::vector<int> numbers;
-
-	// https://stackoverflow.com/a/3114231
-	typedef MenuExitResult(Application::* mainMenu_method_t)(int&);
-	typedef std::map<std::string, mainMenu_method_t> mainMenu_func_map_t;
-	mainMenu_func_map_t mainMenuOptions;
-
-	typedef void (Application::* menu_method_t)(void);
-	typedef std::map<std::string, menu_method_t> menu_func_map_t;
-	menu_func_map_t menuOptions;
-};
-
-struct Menu
-{
-	int selectedOption = 0;
-	MenuExitResult handleAudioMenu(int& mainMenuOptionIndex);
-	int selectedOption = 0;
+	std::vector<std::shared_ptr<Menu>> menuLayers{};
 };

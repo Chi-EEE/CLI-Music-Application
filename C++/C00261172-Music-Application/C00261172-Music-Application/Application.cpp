@@ -4,10 +4,29 @@ Application::Application()
 {
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	mainMenuOptions["My Audio Files"] = &Application::handleAudioMenu;
-	mainMenuOptions["Perform Actions"] = &Application::handleAudioMenu;
-	menuOptions["Add Audio"] = &Application::addAudio;
-	menuOptions["Remove Audio"] = &Application::addAudio;
+	initaliseMenus();
+}
+
+void Application::initaliseMenus()
+{
+	std::shared_ptr<Menu> actionMenu(new Menu);
+	actionMenu->heading = "Perform Actions";
+
+	MenuOption addAudioOption;
+	addAudioOption.heading = "Add Audio";
+	addAudioOption.handle = std::bind(&Application::addAudio, this);
+
+	MenuOption removeAudioOption;
+	removeAudioOption.heading = "Remove Audio";
+	removeAudioOption.handle = std::bind(&Application::addAudio, this);
+
+	actionMenu->menuOptions.push_back(addAudioOption);
+	actionMenu->menuOptions.push_back(removeAudioOption);
+
+	std::shared_ptr<Menu> mainMenu(new Menu);
+	mainMenu->heading = "My CLI Music Application";
+	mainMenu->menuOptions.push_back(actionMenu);
+	menuLayers.push_back(mainMenu);
 }
 
 void Application::run()
@@ -17,33 +36,52 @@ void Application::run()
 		if (this->changed)
 		{
 			this->changed = false;
-			buildMainMenu();
+			clear();
+			std::cout << this->menuLayers[0]->heading << '\n';
+			buildMenu(0);
 		}
+		std::shared_ptr<Menu> currentMenu = this->menuLayers[this->menuLayers.size() - 1];
 		int keyCode;
 		bool isArrowKey = GetKey(keyCode);
 		switch (keyCode)
 		{
 		case 0x48: // Up
 		{
-			if (isArrowKey && this->selectedMainOption > 0)
+			if (isArrowKey && currentMenu->selectedOption > 0)
 			{
 				this->changed = true;
-				this->selectedMainOption--;
+				currentMenu->selectedOption--;
 			}
 			break;
 		}
 		case 0x50: // Down
 		{
-			if (isArrowKey && this->selectedMainOption < mainMenuOptions.size() - 1)
+			if (isArrowKey && currentMenu->selectedOption < currentMenu->menuOptions.size() - 1)
 			{
 				this->changed = true;
-				this->selectedMainOption++;
+				currentMenu->selectedOption++;
 			}
 			break;
 		}
 		case VK_RETURN:
 		{
-			this->selectedMainOptionOpened = true;
+			auto selectedMenu = currentMenu->menuOptions[currentMenu->menuOptions.size() - 1];
+			if (std::holds_alternative<std::shared_ptr<Menu>>(selectedMenu)) {
+				this->menuLayers.push_back(std::get<std::shared_ptr<Menu>>(selectedMenu));
+				this->changed = true;
+			}
+			else if (std::holds_alternative<MenuOption>(selectedMenu)) {
+				std::get<MenuOption>(selectedMenu).handle();
+				this->changed = true;
+			}
+			break;
+		}
+		case VK_ESCAPE:
+		{
+			if (this->menuLayers.size() > 1) {
+				this->menuLayers.pop_back();
+				this->changed = true;
+			}
 			break;
 		}
 		default:
@@ -56,52 +94,51 @@ void Application::run()
 	}
 }
 
-void Application::buildMainMenu()
+void Application::buildMenu(int layerIndex)
 {
-	clear();
-	std::cout << "CLI Music Application\n";
-	int i = 0;
-	for (const auto& option : mainMenuOptions) {
-		if (i == this->selectedMainOption)
-		{
-			setConsoleColor(CYAN);
-			if (this->selectedMainOptionOpened) {
-				std::cout << LINE << "V [" << i << "] " << option.first << '\n' << LINE;
-				auto it = mainMenuOptions.begin();
-				std::advance(it, this->selectedMainOption);
-				this->changed = true;
-				this->levels++;
-				(this->*(it->second))(this->selectedMainOption);
-				this->levels--;
-				this->changed = true;
+	std::shared_ptr<Menu> currentMenu = this->menuLayers[layerIndex];
+	if (currentMenu->menuOptions.size() > 0) {
+		for (int i = 0; i < currentMenu->selectedOption; i++) {
+			if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenu->menuOptions[i])) {
+				std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(currentMenu->menuOptions[i]);
+				std::cout << std::string(layerIndex * 2, ' ') << "> [" << i << "] " << menuOption->heading << '\n';
+			}
+			else if (std::holds_alternative<MenuOption>(currentMenu->menuOptions[i])) {
+				MenuOption menuOption = std::get<MenuOption>(currentMenu->menuOptions[i]);
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption.heading << '\n';
+			}
+		}
+		auto selectedMenu = currentMenu->menuOptions[currentMenu->selectedOption];
+		if (std::holds_alternative<std::shared_ptr<Menu>>(selectedMenu)) {
+			std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(selectedMenu);
+			if (layerIndex + 1 < this->menuLayers.size()) {
+				setConsoleColor(CYAN);
+				std::cout << std::string(layerIndex * 2, ' ') << "V [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
+				resetConsoleColor();
+				buildMenu(layerIndex + 1);
 			}
 			else {
-				std::cout << "> [" << i << "] " << option.first << '\n';
+				setConsoleColor(CYAN);
+				std::cout << std::string(layerIndex * 2, ' ') << "> [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
+				resetConsoleColor();
 			}
-			resetConsoleColor();
-		} else {
-			std::cout << "> [" << i << "] " << option.first << '\n';
 		}
-		i++;
-	}
-}
-
-void Application::buildAudioMenu(int& selectedOption)
-{
-	std::cout << "Actions:\n";
-	int i = 0;
-	for (const auto& option : menuOptions) {
-		if (i == selectedOption)
-		{
+		else if (std::holds_alternative<MenuOption>(selectedMenu)) {
+			MenuOption menuOption = std::get<MenuOption>(selectedMenu);
 			setConsoleColor(CYAN);
-			Write("-> ");
+			std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption.heading << '\n';
 			resetConsoleColor();
-			std::cout << '[' << i << "] " << option.first << '\n';
 		}
-		else {
-			Write('[' + std::to_string(i) + "] " + option.first + '\n');
+		for (int i = currentMenu->selectedOption + 1; i < currentMenu->menuOptions.size(); i++) {
+			if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenu->menuOptions[i])) {
+				std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(currentMenu->menuOptions[i]);
+				std::cout << std::string(layerIndex * 2, ' ') << "> [" << i << "] " << menuOption->heading << '\n';
+			}
+			else if (std::holds_alternative<MenuOption>(currentMenu->menuOptions[i])) {
+				MenuOption menuOption = std::get<MenuOption>(currentMenu->menuOptions[i]);
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption.heading << '\n';
+			}
 		}
-		i++;
 	}
 }
 
@@ -132,67 +169,67 @@ void Application::displayAudioDetails(Audio* audio, int index)
 	}
 }
 
-MenuExitResult Application::handleAudioMenu(int& mainMenuOptionIndex) {
-	int selectedOption = 0;
-	while (true)
-	{
-		if (this->changed)
-		{
-			this->changed = false;
-			buildMainMenu();
-			buildAudioMenu(selectedOption);
-		}
-		int keyCode;
-		bool isArrowKey = GetKey(keyCode);
-		switch (keyCode)
-		{
-		case 0x48: // Up
-		{
-			if (isArrowKey && selectedOption > 0)
-			{
-				this->changed = true;
-				selectedOption--;
-			}
-			break;
-		}
-		case 0x50: // Down
-		{
-			if (isArrowKey && selectedOption < menuOptions.size() - 1)
-			{
-				this->changed = true;
-				selectedOption++;
-			}
-			break;
-		}
-		case VK_RETURN:
-		{
-			auto it = menuOptions.begin();
-			std::advance(it, selectedOption);
-			this->changed = true;
-			(this->*(it->second))();
-			this->changed = true;
-			break;
-		}
-		case VK_TAB:
-		{
-			if (GetKeyState(VK_SHIFT)) {
-				return MenuExitResult::SHIFT_TAB;
-			}
-			return MenuExitResult::TAB;
-		}
-		case VK_ESCAPE:
-		{
-			return MenuExitResult::ESCAPE;
-		}
-		default:
-		{
-			std::cout << "\b \b";
-			break;
-		}
-		break;
-		}
-	}
-}
+//MenuExitResult Application::handleAudioMenu(int& mainMenuOptionIndex) {
+//	int selectedOption = 0;
+//	while (true)
+//	{
+//		if (this->changed)
+//		{
+//			this->changed = false;
+//			buildMainMenu();
+//			buildAudioMenu(selectedOption);
+//		}
+//		int keyCode;
+//		bool isArrowKey = GetKey(keyCode);
+//		switch (keyCode)
+//		{
+//		case 0x48: // Up
+//		{
+//			if (isArrowKey && selectedOption > 0)
+//			{
+//				this->changed = true;
+//				selectedOption--;
+//			}
+//			break;
+//		}
+//		case 0x50: // Down
+//		{
+//			if (isArrowKey && selectedOption < menuOptions.size() - 1)
+//			{
+//				this->changed = true;
+//				selectedOption++;
+//			}
+//			break;
+//		}
+//		case VK_RETURN:
+//		{
+//			auto it = menuOptions.begin();
+//			std::advance(it, selectedOption);
+//			this->changed = true;
+//			(this->*(it->second))();
+//			this->changed = true;
+//			break;
+//		}
+//		case VK_TAB:
+//		{
+//			if (GetKeyState(VK_SHIFT)) {
+//				return MenuExitResult::SHIFT_TAB;
+//			}
+//			return MenuExitResult::TAB;
+//		}
+//		case VK_ESCAPE:
+//		{
+//			return MenuExitResult::ESCAPE;
+//		}
+//		default:
+//		{
+//			std::cout << "\b \b";
+//			break;
+//		}
+//		break;
+//		}
+//	}
+//}
 
 void Application::addAudio()
 {
@@ -215,7 +252,6 @@ void Application::addAudio()
 		}
 		Audio newAudio = Audio(name, description, duration, artist);
 		audioLibrary.addAudio(newAudio);
-		buildMainMenu();
 		setConsoleColor(GREEN);
 		Write("- Audio Created: " + newAudio.getName() + '\n');
 		resetConsoleColor();
@@ -249,7 +285,6 @@ bool Application::YesOrNo(std::string question)
 		if (changed)
 		{
 			changed = false;
-			buildMainMenu();
 			Write(question + "\n[");
 			if (yes)
 			{
@@ -306,7 +341,6 @@ std::string Application::EnterConsoleString(std::string statement)
 	this->changed = true;
 	while (true)
 	{
-		buildMainMenu();
 		Write(statement + "\n> ");
 		std::string input;
 		std::cin >> input;
@@ -331,7 +365,6 @@ int Application::EnterConsoleInt(std::string statement)
 	this->changed = true;
 	while (true)
 	{
-		buildMainMenu();
 		Write(statement + "\n> ");
 		int input;
 		std::cin >> input;
@@ -352,7 +385,7 @@ int Application::EnterConsoleInt(std::string statement)
 
 void Application::Write(std::string message)
 {
-	std::cout << std::string(this->levels * 2, ' ') << message;
+	std::cout << message;
 }
 
 /// <summary>
