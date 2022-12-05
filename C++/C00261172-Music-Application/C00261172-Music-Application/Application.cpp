@@ -9,6 +9,9 @@ Application::Application()
 
 void Application::initaliseMenus()
 {
+	std::shared_ptr<Menu> audioMenu(new Menu);
+	audioMenu->heading = "View Audio";
+
 	std::shared_ptr<Menu> actionMenu(new Menu);
 	actionMenu->heading = "Perform Actions";
 
@@ -25,6 +28,7 @@ void Application::initaliseMenus()
 
 	std::shared_ptr<Menu> mainMenu(new Menu);
 	mainMenu->heading = "My CLI Music Application";
+	mainMenu->menuOptions.push_back(audioMenu);
 	mainMenu->menuOptions.push_back(actionMenu);
 	menuLayers.push_back(mainMenu);
 }
@@ -37,81 +41,84 @@ void Application::run()
 		{
 			this->changed = false;
 			clear();
-			std::cout << this->menuLayers[0]->heading << '\n';
+			// Display Main Menu Heading
+			std::cout << std::get<std::shared_ptr<Menu>>(this->menuLayers[0])->heading << '\n';
 			buildMenu(0);
 		}
-		std::shared_ptr<Menu> currentMenu = this->menuLayers[this->menuLayers.size() - 1];
 		int keyCode;
 		bool isArrowKey = GetKey(keyCode);
-		switch (keyCode)
-		{
-		case 0x48: // Up
-		{
-			if (isArrowKey && currentMenu->selectedOption > 0)
-			{
-				this->changed = true;
-				currentMenu->selectedOption--;
-			}
-			break;
-		}
-		case 0x50: // Down
-		{
-			if (isArrowKey && currentMenu->selectedOption < currentMenu->menuOptions.size() - 1)
-			{
-				this->changed = true;
-				currentMenu->selectedOption++;
-			}
-			break;
-		}
-		case VK_RETURN:
-		{
-			auto selectedMenu = currentMenu->menuOptions[currentMenu->menuOptions.size() - 1];
-			if (std::holds_alternative<std::shared_ptr<Menu>>(selectedMenu)) {
-				this->menuLayers.push_back(std::get<std::shared_ptr<Menu>>(selectedMenu));
-				this->changed = true;
-			}
-			else if (std::holds_alternative<MenuOption>(selectedMenu)) {
-				std::get<MenuOption>(selectedMenu).handle();
-				this->changed = true;
-			}
-			break;
-		}
-		case VK_ESCAPE:
-		{
+		auto currentMenuOption = this->menuLayers[this->menuLayers.size() - 1];
+		if (keyCode == VK_ESCAPE) {
 			if (this->menuLayers.size() > 1) {
-				this->menuLayers[this->menuLayers.size() - 1]->selectedOption = 0;
+				if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenuOption)) {
+					std::shared_ptr<Menu> currentMenu = std::get<std::shared_ptr<Menu>>(currentMenuOption);
+					currentMenu->selectedOption = 0;
+				}
 				this->menuLayers.pop_back();
 				this->changed = true;
 			}
-			break;
 		}
-		case VK_TAB:
-			if (this->menuLayers.size() > 1) {
-				this->menuLayers[this->menuLayers.size() - 1]->selectedOption = 0;
-				this->menuLayers.pop_back();
-				this->changed = true;
-				if (GetKeyState(VK_SHIFT)) {
-					this->menuLayers[this->menuLayers.size() - 1]->selectedOption = mod(this->menuLayers[this->menuLayers.size() - 1]->selectedOption - 1, this->menuLayers.size());
-				}
-				else {
-					this->menuLayers[this->menuLayers.size() - 1]->selectedOption = mod(this->menuLayers[this->menuLayers.size() - 1]->selectedOption + 1, this->menuLayers.size());
-				}
-				this->changed = true;
+		else {
+			if (std::holds_alternative<MenuOption>(currentMenuOption)) {
+				std::get<MenuOption>(currentMenuOption).handle(keyCode, isArrowKey);
 			}
-			break;
-		default:
+			else if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenuOption)) {
+				handleMenu(std::get<std::shared_ptr<Menu>>(currentMenuOption), keyCode, isArrowKey);
+			}
+		}
+	}
+}
+
+void Application::handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, bool isArrowKey) {
+	switch (keyCode)
+	{
+	case 0x48: // Up
+	{
+		if (isArrowKey && currentMenu->menuOptions.size() > 0 && currentMenu->selectedOption > 0)
 		{
-			std::cout << "\b \b";
-			break;
+			this->changed = true;
+			currentMenu->selectedOption--;
 		}
 		break;
+	}
+	case 0x50: // Down
+	{
+		if (isArrowKey && currentMenu->menuOptions.size() > 0 && currentMenu->selectedOption < currentMenu->menuOptions.size() - 1)
+		{
+			this->changed = true;
+			currentMenu->selectedOption++;
 		}
+		break;
+	}
+	case VK_RETURN:
+	{
+		auto selectedMenuOption = currentMenu->menuOptions[currentMenu->selectedOption];
+		this->menuLayers.push_back(selectedMenuOption);
+		this->changed = true;
+		break;
+	}
+	case VK_TAB:
+	{
+		if (this->menuLayers.size() > 1) {
+			currentMenu->selectedOption = 0;
+			this->menuLayers.pop_back();
+			std::shared_ptr<Menu> parentMenu = std::get<std::shared_ptr<Menu>>(this->menuLayers[this->menuLayers.size() - 1]);
+			if (GetKeyState(VK_SHIFT)) {
+				parentMenu->selectedOption = mod(parentMenu->selectedOption - 1, this->menuLayers.size());
+			}
+			else {
+				parentMenu->selectedOption = mod(parentMenu->selectedOption + 1, this->menuLayers.size());
+			}
+			this->changed = true;
+		}
+		break;
+	}
 	}
 }
 
 void Application::buildMenu(int layerIndex)
 {
-	std::shared_ptr<Menu> currentMenu = this->menuLayers[layerIndex];
+	std::shared_ptr<Menu> currentMenu = std::get<std::shared_ptr<Menu>>(this->menuLayers[layerIndex]);
 	if (currentMenu->menuOptions.size() > 0) {
 		for (int i = 0; i < currentMenu->selectedOption; i++) {
 			if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenu->menuOptions[i])) {

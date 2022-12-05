@@ -3,5 +3,5 @@
 #include <functional>
 struct MenuOption {
 	std::string heading;
-	std::function<void()> handle;
+	std::function<void(int keyCode, bool isArrowKey)> handle;
 };

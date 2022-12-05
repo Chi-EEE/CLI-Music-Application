@@ -35,6 +35,7 @@ public:
 	void run();
 private:
 	void initaliseMenus();
+	void handleMenu(std::shared_ptr<Menu> currentMenu, int keyCode, bool isArrowKey);
 	void buildMenu(int layerIndex);
 	void displayAudioDetails(Audio* audio, int index);
 	void addAudio();
@@ -54,5 +55,5 @@ private:
 	bool changed = true;
 	const std::string LINE = "=======================================================================================================================\n";
 
-	std::vector<std::shared_ptr<Menu>> menuLayers{};
+	std::vector<std::variant<std::shared_ptr<Menu>, MenuOption>> menuLayers{};
 };
