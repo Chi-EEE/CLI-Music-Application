@@ -148,6 +148,7 @@
     <ClCompile Include="DoubleLinkedNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AudioLibrary.cpp" />
+    <ClCompile Include="MenuOption.cpp" />
     <ClCompile Include="Playlist.cpp" />
     <ClCompile Include="SelectableAudioList.cpp" />
     <ClCompile Include="Audio.cpp" />
