@@ -15,7 +15,7 @@ void Application::initaliseMenus()
 	std::shared_ptr<Menu> actionMenu(new Menu);
 	actionMenu->heading = "Perform Actions";
 
-	std::shared_ptr<MenuOption> addAudioOption(new MenuOption);
+	std::shared_ptr<MenuOption> addAudioOption = std::make_shared<MenuOption>();
 	addAudioOption->heading = "Add Audio";
 	addAudioOption->handle = std::bind(&Application::addAudio, this, std::placeholders::_1, std::placeholders::_2);
 
