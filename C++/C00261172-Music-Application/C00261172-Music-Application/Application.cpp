@@ -79,11 +79,26 @@ void Application::run()
 		case VK_ESCAPE:
 		{
 			if (this->menuLayers.size() > 1) {
+				this->menuLayers[this->menuLayers.size() - 1]->selectedOption = 0;
 				this->menuLayers.pop_back();
 				this->changed = true;
 			}
 			break;
 		}
+		case VK_TAB:
+			if (this->menuLayers.size() > 1) {
+				this->menuLayers[this->menuLayers.size() - 1]->selectedOption = 0;
+				this->menuLayers.pop_back();
+				this->changed = true;
+				if (GetKeyState(VK_SHIFT)) {
+					this->menuLayers[this->menuLayers.size() - 1]->selectedOption = mod(this->menuLayers[this->menuLayers.size() - 1]->selectedOption - 1, this->menuLayers.size());
+				}
+				else {
+					this->menuLayers[this->menuLayers.size() - 1]->selectedOption = mod(this->menuLayers[this->menuLayers.size() - 1]->selectedOption + 1, this->menuLayers.size());
+				}
+				this->changed = true;
+			}
+			break;
 		default:
 		{
 			std::cout << "\b \b";
@@ -168,68 +183,6 @@ void Application::displayAudioDetails(Audio* audio, int index)
 		Write("  Description: \n   -" + audio->getDescription() + '\n');
 	}
 }
-
-//MenuExitResult Application::handleAudioMenu(int& mainMenuOptionIndex) {
-//	int selectedOption = 0;
-//	while (true)
-//	{
-//		if (this->changed)
-//		{
-//			this->changed = false;
-//			buildMainMenu();
-//			buildAudioMenu(selectedOption);
-//		}
-//		int keyCode;
-//		bool isArrowKey = GetKey(keyCode);
-//		switch (keyCode)
-//		{
-//		case 0x48: // Up
-//		{
-//			if (isArrowKey && selectedOption > 0)
-//			{
-//				this->changed = true;
-//				selectedOption--;
-//			}
-//			break;
-//		}
-//		case 0x50: // Down
-//		{
-//			if (isArrowKey && selectedOption < menuOptions.size() - 1)
-//			{
-//				this->changed = true;
-//				selectedOption++;
-//			}
-//			break;
-//		}
-//		case VK_RETURN:
-//		{
-//			auto it = menuOptions.begin();
-//			std::advance(it, selectedOption);
-//			this->changed = true;
-//			(this->*(it->second))();
-//			this->changed = true;
-//			break;
-//		}
-//		case VK_TAB:
-//		{
-//			if (GetKeyState(VK_SHIFT)) {
-//				return MenuExitResult::SHIFT_TAB;
-//			}
-//			return MenuExitResult::TAB;
-//		}
-//		case VK_ESCAPE:
-//		{
-//			return MenuExitResult::ESCAPE;
-//		}
-//		default:
-//		{
-//			std::cout << "\b \b";
-//			break;
-//		}
-//		break;
-//		}
-//	}
-//}
 
 void Application::addAudio()
 {
@@ -422,4 +375,8 @@ void Application::clear() {
 #elif defined (__APPLE__)
 	system("clear");
 #endif
+}
+
+int Application::mod(int left, int right) {
+	return (left + right) % right;
 }

@@ -47,6 +47,7 @@ private:
 	void setConsoleColor(int color);
 	void resetConsoleColor();
 	void clear();
+	int mod(int left, int right); 
 	HANDLE hConsole; // Console window
 
 	AudioLibrary audioLibrary;
