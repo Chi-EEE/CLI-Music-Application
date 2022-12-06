@@ -94,15 +94,6 @@ void Menu::run() {
 //	SendSuccess(std::to_string(amountOfSets) + " Sets have been generated.\n\n");
 //}
 
-/// Ask the user for the set size.
-/// If the inputted value is not a number then
-/// repeat the question.
-/// If not then create the set with the given values with
-/// Set name being the index for the unordered_map to reference by and
-/// Set Size being the size of the set
-/// </summary>
-void Menu::addAudio() {
-	//std::string setName;
 
 void Menu::addAudio() {
 	std::string audioName;
