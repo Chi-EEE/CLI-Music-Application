@@ -5,10 +5,25 @@
 
 #include "Console.h"
 
+#include <memory>
+#include <variant>
+
 struct MenuOption {
 	virtual bool handle(int keyCode, bool isArrowKey) = 0;
 	void display() {
-		std::cout << text;
+		auto currentStageText = stageText[this->stage];
+		if (std::holds_alternative<std::string>(currentStageText)) {
+			std::cout << std::get<std::string>(currentStageText);
+		}
+		else if (std::holds_alternative<std::pair<std::string, std::variant<std::shared_ptr<int>, std::shared_ptr<std::string>>>>(currentStageText)) {
+			auto currentStageTextWithVariable = std::get<std::pair<std::string, std::variant<std::shared_ptr<int>, std::shared_ptr<std::string>>>>(currentStageText);
+			if (std::holds_alternative<std::shared_ptr<std::string>>(currentStageTextWithVariable.second)) {
+				std::cout << currentStageTextWithVariable.first << *std::get<std::shared_ptr<std::string>>(currentStageTextWithVariable.second);
+			}
+			else if (std::holds_alternative<std::shared_ptr<int>>(currentStageTextWithVariable.second)) {
+				std::cout << currentStageTextWithVariable.first << *std::get<std::shared_ptr<int>>(currentStageTextWithVariable.second);
+			}
+		}
 	}
 	/// <summary>
 	/// Use Arrow Keys / A or D to decide which option to pick
@@ -19,22 +34,6 @@ struct MenuOption {
 	/// <returns>true if complete</returns>
 	bool YesOrNo(bool& result, int keyCode, bool isArrowKey)
 	{
-		this->text += "\n[";
-		if (result)
-		{
-			this->text += "N |";
-			//setConsoleColor(CYAN);
-			this->text += " Y";
-			//resetConsoleColor();
-		}
-		else
-		{
-			//setConsoleColor(CYAN);
-			this->text += "N ";
-			//resetConsoleColor();
-			this->text += "| Y";
-		}
-		this->text += "]\n";
 		switch (keyCode)
 		{
 		case 0x4B: // Left
@@ -47,19 +46,17 @@ struct MenuOption {
 			if (!isArrowKey)
 				return false;
 		case 0x59: // Y
-			result = false;
+			result = true;
 			return false;
 		case VK_RETURN:
 			return true;
 		default:
-			break;
+			return false;
 		}
 	}
 
 	bool inputText(std::string& text, int keyCode, bool isArrowKey)
 	{
-		this->text += text;
-		std::cout << keyCode;
 		switch (keyCode) {
 		case VK_BACK:
 			if (VK_CONTROL) {
@@ -92,7 +89,6 @@ struct MenuOption {
 
 	bool inputNumber(int& number, int keyCode, bool isArrowKey)
 	{
-		this->text += std::to_string(number);
 		switch (keyCode) {
 		case VK_BACK:
 		{
@@ -114,7 +110,8 @@ struct MenuOption {
 		}
 		return false;
 	}
-	std::string text;
 	std::string heading;
 	short stage = 0;
+	std::vector<std::variant<std::string, std::pair<std::string, std::variant<std::shared_ptr<int>, std::shared_ptr<std::string>>>>>
+		stageText{};
 };

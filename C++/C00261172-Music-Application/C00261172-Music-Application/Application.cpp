@@ -13,7 +13,7 @@ void Application::initaliseMenus()
 	std::shared_ptr<Menu> actionMenu(new Menu);
 	actionMenu->heading = "Perform Actions";
 
-	std::shared_ptr<AddAudio> addAudioOption = std::make_shared<AddAudio>();
+	std::shared_ptr<AddAudio> addAudioOption = std::make_shared<AddAudio>(this->audioLibrary);
 	addAudioOption->heading = "Add Audio";
 
 	//std::shared_ptr<MenuOption> removeAudioOption(new MenuOption);
@@ -51,6 +51,9 @@ void Application::run()
 					std::shared_ptr<Menu> currentMenu = std::get<std::shared_ptr<Menu>>(currentMenuOption);
 					currentMenu->selectedOption = 0;
 				}
+				else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenuOption)) {
+					std::shared_ptr<MenuOption> currentMenu = std::get<std::shared_ptr<MenuOption>>(currentMenuOption);
+				}
 				this->menuLayers.pop_back();
 				this->changed = true;
 			}
@@ -59,7 +62,7 @@ void Application::run()
 			if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenuOption)) {
 				bool result = std::get<std::shared_ptr<MenuOption>>(currentMenuOption)->handle(keyCode, isArrowKey);
 				this->changed = true;
-				if (!result) {
+				if (result) {
 					if (this->menuLayers.size() > 1) {
 						if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenuOption)) {
 							std::shared_ptr<Menu> currentMenu = std::get<std::shared_ptr<Menu>>(currentMenuOption);
@@ -144,7 +147,7 @@ void Application::buildMenu(int layerIndex)
 			}
 			else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i])) {
 				std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i]);
-				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n' << menuOption->text;
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n';
 			}
 		}
 		auto selectedMenu = currentMenu->menuOptions[currentMenu->selectedOption];
@@ -164,8 +167,17 @@ void Application::buildMenu(int layerIndex)
 		}
 		else if (std::holds_alternative<std::shared_ptr<MenuOption>>(selectedMenu)) {
 			std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(selectedMenu);
-			Console::getInstance()->setConsoleColor(CYAN);
-			std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n' << menuOption->text;
+			if (layerIndex + 1 < this->menuLayers.size()) {
+				Console::getInstance()->setConsoleColor(CYAN);
+				std::cout << std::string(layerIndex * 2, ' ') << "V [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
+				Console::getInstance()->resetConsoleColor();
+				menuOption->display();
+			}
+			else {
+				Console::getInstance()->setConsoleColor(CYAN);
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
+				Console::getInstance()->resetConsoleColor();
+			}
 			Console::getInstance()->resetConsoleColor();
 		}
 		for (int i = currentMenu->selectedOption + 1; i < currentMenu->menuOptions.size(); i++) {
@@ -175,7 +187,7 @@ void Application::buildMenu(int layerIndex)
 			}
 			else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i])) {
 				std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i]);
-				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n' << menuOption->text;
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n';
 			}
 		}
 	}
