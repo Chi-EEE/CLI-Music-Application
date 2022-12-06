@@ -401,6 +401,62 @@ void Menu::listSets() {
 	std::cout << "Set Names: " << setsString;*/
 }
 
+bool InputText(std::string& text, int keyCode, bool isArrowKey)
+{
+	switch (keyCode) {
+	case VK_BACK:
+		if (VK_CONTROL) {
+			text = "";
+		}
+		else if (text.length() > 0) {
+			text.pop_back();
+		}
+		return false;
+	case VK_SPACE:
+		text += " ";
+		return false;
+	case VK_RETURN:
+		return true;
+	default:
+		if (!isArrowKey) {
+			if (keyCode >= 97 && keyCode <= 122) { // a - z
+				text += 'a' + keyCode - 97;
+			}
+			else if (keyCode >= 65 && keyCode <= 90) { // A - Z
+				text += 'A' + keyCode - 65;
+			}
+			else if (keyCode >= 48 && keyCode <= 57) { // 0 - 9
+				text += '0' + keyCode - 48;
+			}
+		}
+		return false;
+	}
+}
+
+bool InputNumber(int& number, int keyCode, bool isArrowKey)
+{
+	switch (keyCode) {
+	case VK_BACK:
+	{
+		if (VK_CONTROL) {
+			number = 0;
+		}
+		else if (number > 0) {
+			number /= 10;
+		}
+		return false;
+	}
+	case VK_RETURN:
+	{
+		return number > 0;
+	}
+	}
+	if (keyCode >= 48 && keyCode <= 57) { // 0 - 9
+		number += keyCode - 48;
+	}
+	return false;
+}
+
 /// <summary>
 /// Send success message with green colour
 /// </summary>
