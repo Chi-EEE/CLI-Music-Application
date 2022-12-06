@@ -1,5 +1,10 @@
 #include "SelectableAudioList.h"
 
+bool SelectableAudioList::removeAudio(std::shared_ptr<Audio> audio)
+{
+	return audioList.removeData(audio);
+}
+
 std::shared_ptr<Audio> SelectableAudioList::getSelectedAudio()
 {
 	if (this->selectedAudio == nullptr) {
@@ -16,10 +21,6 @@ std::shared_ptr<Audio> SelectableAudioList::getSelectedAudio()
 
 std::shared_ptr<Audio> SelectableAudioList::getNextSelectedAudio()
 {
-	if (this->selectedAudio == nullptr) {
-		this->selectedAudio = this->audioList.getHead();
-		return this->selectedAudio.get()->data;
-	}
 	this->selectedAudio = this->selectedAudio.get()->next;
 	DoubleLinkedNode<Audio>* audioNode = this->selectedAudio.get();
 	if (audioNode == nullptr) {

@@ -1,11 +1,11 @@
 #pragma once
 #include "CircularLinkedList.h"
-#include "DoubleLinkedNode.h"
 #include "Audio.h"
 
 class SelectableAudioList
 {
 public:
+	bool removeAudio(std::shared_ptr<Audio> audio);
 	std::shared_ptr<Audio> getSelectedAudio();
 	std::shared_ptr<Audio> getNextSelectedAudio();
 	bool removeSelectedAudio();

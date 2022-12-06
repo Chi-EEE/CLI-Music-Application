@@ -30,7 +30,7 @@ private:
 	bool continueOperation();
 	bool findSet(std::string setName);
 	std::string askForSet(std::string index);
-	void listSets();
+	void displayAllAudio();
 	void SendSuccess(std::string successMessage);
 	void SendError(std::string errorMessage);
 	void SendError(std::string errorMessage, std::string extraMessage);

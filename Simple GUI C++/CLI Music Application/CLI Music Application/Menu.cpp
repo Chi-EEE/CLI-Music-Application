@@ -22,6 +22,7 @@ std::string random_string(size_t length)
 
 void Menu::run() {
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	audioLibrary = std::make_shared<AudioLibrary>();
 
 	int selection = 0;
 	while (true) // MAIN LOOP
@@ -93,11 +94,6 @@ void Menu::run() {
 //	SendSuccess(std::to_string(amountOfSets) + " Sets have been generated.\n\n");
 //}
 
-/// <summary>
-/// Ask user to input a name for the set,
-/// if another set is found with the name then
-/// repeat the question.
-/// If not then continue to the next question
 /// Ask the user for the set size.
 /// If the inputted value is not a number then
 /// repeat the question.
@@ -107,41 +103,39 @@ void Menu::run() {
 /// </summary>
 void Menu::addAudio() {
 	//std::string setName;
-	//int setSize = 1;
 
-	//while (true) {
-	//	std::cout << "Enter the name of the new set: ";
-	//	std::cin >> setName;
-	//	if (!findSet(setName)) { // Check if set isn't inside of the unordered_map
-	//		break;
-	//	}
-	//	SendError("\nAnother Set with the same name was already made.\n\n");
-	//	if (!continueOperation()) {
-	//		return; // EXIT FUNCTION
-	//	}
-	//}
-	//while (true) {
-	//	std::cout << "\nEnter the size of the new set: \n";
-	//	std::cin >> setSize;
-	//	if (!std::cin.fail()) {
-	//		break;
-	//	}
-	//	SendError("Error: Numbers only.\n");
-	//	std::cin.clear();
-	//	std::cin.ignore(256, '\n');
-	//}
-	//sets[setName] = std::make_unique<Set>(setSize); // Create a unique pointer for the set
-	//SendSuccess("Set: " + setName + " | Size: " + std::to_string(setSize) + " was created.\n\n");
+void Menu::addAudio() {
+	std::string audioName;
+	std::string audioDescription;
+	int audioDuration = 1;
+
+	std::cout << "Please enter the Audio's Name: ";
+	std::cin >> audioName;
+	if (!continueOperation()) {
+		return; // EXIT FUNCTION
+	}
+	std::cout << "Please enter the Audio's Description: ";
+	std::cin >> audioDescription;
+	if (!continueOperation()) {
+		return; // EXIT FUNCTION
+	}
+	while (true) {
+		std::cout << "Please enter the Audio's Duration: ";
+		std::cin >> audioDuration;
+		if (!std::cin.fail()) {
+			break;
+		}
+		SendError("Error: Numbers only.\n");
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+	}
+	SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " was created.\n\n");
+	this->audioLibrary->addAudio(Audio(audioName, audioDescription, audioDuration));
 }
 
-/// <summary>
-/// Ask user for set and ask them for a value to add into the Set,
-/// if the Set is full, then display that it's full
-/// if the Set already has the value, then display that it already has the value
-/// if the Set doesn't have the value and it isn't full then display that it was successful
-/// </summary>
+
 void Menu::removeAudio() {
-	//listSets();
+	displayAllAudio();
 	//std::string setName;
 	//bool continueAdd = false;
 
@@ -339,12 +333,12 @@ void Menu::playAllAudioInProgram() {
 bool Menu::continueOperation() {
 	bool continueOp = false;
 	while (true) {
-		std::cout << "Would you like to continue:\n\t0 = No\n\t1 = Yes\n\nEnter an Option: ";
+		std::cout << "\nWould you like to continue:\n\t0 = No\n\t1 = Yes\n> ";
 		std::cin >> continueOp;
 		if (!std::cin.fail()) {
 			break;
 		}
-		SendError("\nError: 0 or 1\n\n");
+		SendError("\nError: 0 or 1");
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
 	}
@@ -388,17 +382,8 @@ std::string Menu::askForSet(std::string index) {
 	return setName;
 }
 
-/// <summary>
-/// Loop through all of the keys inside of the sets unordered_map
-/// </summary>
-void Menu::listSets() {
-	/*std::string setsString;
-	for (std::unordered_map<std::string, std::unique_ptr<Set>>::iterator iter = sets.begin(); iter != sets.end(); ++iter)
-	{
-		setsString = setsString + "||" + iter->first;
-	}
-	setsString = setsString + "||\n\n";
-	std::cout << "Set Names: " << setsString;*/
+void Menu::displayAllAudio() {
+	std::cout << "All Audio in the Program: " << audioLibrary->getAllAudio();
 }
 
 bool InputText(std::string& text, int keyCode, bool isArrowKey)
