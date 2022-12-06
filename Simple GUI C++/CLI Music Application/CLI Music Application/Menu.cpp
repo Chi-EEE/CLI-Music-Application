@@ -127,11 +127,25 @@ void Menu::addAudio() {
 
 void Menu::removeAudio() {
 	displayAllAudio();
-	//std::string setName;
-	//bool continueAdd = false;
 
-	//setName = askForSet("");
-	//if (setName == "") { return; }
+	std::shared_ptr<Audio> audio;
+	std::string audioName;
+
+	while (true) {
+		std::cout << "Please enter the Audio's Name: ";
+		std::cin >> audioName;
+		audio = audioLibrary->getAudioByName(audioName);
+		if (audio != nullptr) {
+			break;
+		}
+		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
+		if (!continueOperation()) {
+			return; // EXIT FUNCTION
+		}
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+	}
+	if (audioName == "") { return; }
 
 	//while (true)
 	//{
@@ -295,29 +309,6 @@ void Menu::playAllAudioInProgram() {
 }
 
 /// <summary>
-/// Ask user for two set names and call the Set equals method with the second Set as the parameter
-///	If the first set equals second set then
-/// Send success else Send error
-/// </summary>
-//void Menu::equalsSet() {
-//	listSets();
-//	std::string setName1;
-//	std::string setName2;
-//
-//	setName1 = askForSet("[1] ");
-//	if (setName1 == "") { return; }
-//	setName2 = askForSet("[2] ");
-//	if (setName2 == "") { return; }
-//
-//	if (sets[setName1]->equals(sets[setName2])) {
-//		SendSuccess("Set: '" + setName1 + "' equals to Set: " + setName2 + "!\n\n");
-//	}
-//	else {
-//		SendError("Set: '" + setName1 + "' does not equals to Set: " + setName2 + "!\n\n");
-//	}
-//}
-
-/// <summary>
 /// Ask user if they would like to continue operation
 /// </summary>
 /// <returns>True = continue/ False = stop</returns>
@@ -345,32 +336,6 @@ bool Menu::continueOperation() {
 bool Menu::findSet(std::string setName) {
 	return false;
 	//return sets.find(setName) != sets.end();
-}
-
-/// <summary>
-/// Ask the user for a set name,
-/// If a set is found then break out of the loop,
-/// If there is no set then the user can exit out of the loop
-/// </summary>
-/// <param name="index"></param>
-/// <returns></returns>
-std::string Menu::askForSet(std::string index) {
-	std::string setName;
-	while (true)
-	{
-		std::cout << index << "Enter the name of your set: ";
-		std::cin >> setName;
-		// This if statement checks if the name of the set is in the unordered_map
-		if (findSet(setName)) {
-			break;
-		}
-		SendError("\nSet not found.\n\n");
-		if (!continueOperation()) {
-			return ""; // EXIT FUNCTION
-		}
-	}
-	std::cout << "\n";
-	return setName;
 }
 
 void Menu::displayAllAudio() {

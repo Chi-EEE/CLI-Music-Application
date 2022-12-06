@@ -1,7 +1,7 @@
 #pragma 
 #include "SelectableAudioList.h"
 #include "Audio.h"
-class Playlist: public SelectableAudioList
+class Playlist: public AudioList
 {
 public:
 	Playlist(std::string name);

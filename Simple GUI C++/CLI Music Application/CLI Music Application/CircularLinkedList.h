@@ -51,7 +51,7 @@ inline bool CircularLinkedList<T>::removeData(std::shared_ptr<T> data)
 				this->count--;
 				return true;
 			}
-		} while (temp != this->tail);
+		} while (temp != nullptr && temp != this->tail);
 	}
 	return false;
 }

@@ -39,7 +39,7 @@
     <ClCompile Include="Playlist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SelectableAudioList.cpp">
+    <ClCompile Include="AudioList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,7 +68,7 @@
     <ClInclude Include="Playlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SelectableAudioList.h">
+    <ClInclude Include="AudioList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CircularLinkedList.h">

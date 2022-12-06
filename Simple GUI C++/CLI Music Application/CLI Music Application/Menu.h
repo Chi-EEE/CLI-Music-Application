@@ -11,7 +11,7 @@ class Menu
 {
 public:
 	void run();
-	void generateSets();
+	//void generateSets();
 	void addAudio();
 	void removeAudio();
 	void playAudio();
@@ -20,7 +20,7 @@ public:
 	void removeAudioFromPlaylist();
 	void playAllAudioInPlaylist();
 	void playAllAudioInProgram();
-	void equalsSet();
+	//void equalsSet();
 
 private:
 	HANDLE hConsole; // Console window
@@ -29,7 +29,7 @@ private:
 
 	bool continueOperation();
 	bool findSet(std::string setName);
-	std::string askForSet(std::string index);
+	//std::string askForSet(std::string index);
 	void displayAllAudio();
 	void SendSuccess(std::string successMessage);
 	void SendError(std::string errorMessage);

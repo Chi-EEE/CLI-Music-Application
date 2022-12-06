@@ -135,7 +135,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Playlist.cpp" />
-    <ClCompile Include="SelectableAudioList.cpp" />
+    <ClCompile Include="AudioList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Artist.h" />
@@ -147,7 +147,7 @@
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Playlist.h" />
-    <ClInclude Include="SelectableAudioList.h" />
+    <ClInclude Include="AudioList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
