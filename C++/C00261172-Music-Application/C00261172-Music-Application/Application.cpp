@@ -13,16 +13,15 @@ void Application::initaliseMenus()
 	std::shared_ptr<Menu> actionMenu(new Menu);
 	actionMenu->heading = "Perform Actions";
 
-	std::shared_ptr<MenuOption> addAudioOption = std::make_shared<MenuOption>();
+	std::shared_ptr<AddAudio> addAudioOption = std::make_shared<AddAudio>();
 	addAudioOption->heading = "Add Audio";
-	addAudioOption->handle = std::bind(&Application::addAudio, this, std::placeholders::_1, std::placeholders::_2);
 
-	std::shared_ptr<MenuOption> removeAudioOption(new MenuOption);
-	removeAudioOption->heading = "Remove Audio";
-	removeAudioOption->handle = std::bind(&Application::removeAudio, this, std::placeholders::_1, std::placeholders::_2);
+	//std::shared_ptr<MenuOption> removeAudioOption(new MenuOption);
+	//removeAudioOption->heading = "Remove Audio";
+	//removeAudioOption->handle = std::bind(&Application::removeAudio, this, std::placeholders::_1, std::placeholders::_2);
 
 	actionMenu->menuOptions.push_back(addAudioOption);
-	actionMenu->menuOptions.push_back(removeAudioOption);
+	//actionMenu->menuOptions.push_back(removeAudioOption);
 
 	std::shared_ptr<Menu> mainMenu(new Menu);
 	mainMenu->heading = "My CLI Music Application";
@@ -38,13 +37,13 @@ void Application::run()
 		if (this->changed)
 		{
 			this->changed = false;
-			clear();
+			Console::getInstance()->clearConsole();
 			// Display Main Menu Heading
 			std::cout << std::get<std::shared_ptr<Menu>>(this->menuLayers[0])->heading << '\n';
 			buildMenu(0);
 		}
 		int keyCode;
-		bool isArrowKey = GetKey(keyCode);
+		bool isArrowKey = Console::getInstance()->getKey(keyCode);
 		auto currentMenuOption = this->menuLayers[this->menuLayers.size() - 1];
 		if (keyCode == VK_ESCAPE) {
 			if (this->menuLayers.size() > 1) {
@@ -59,6 +58,7 @@ void Application::run()
 		else {
 			if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenuOption)) {
 				bool result = std::get<std::shared_ptr<MenuOption>>(currentMenuOption)->handle(keyCode, isArrowKey);
+				this->changed = true;
 				if (!result) {
 					if (this->menuLayers.size() > 1) {
 						if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenuOption)) {
@@ -136,6 +136,7 @@ void Application::buildMenu(int layerIndex)
 {
 	std::shared_ptr<Menu> currentMenu = std::get<std::shared_ptr<Menu>>(this->menuLayers[layerIndex]);
 	if (currentMenu->menuOptions.size() > 0) {
+		// Go through the menu options and print their text out
 		for (int i = 0; i < currentMenu->selectedOption; i++) {
 			if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenu->menuOptions[i])) {
 				std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(currentMenu->menuOptions[i]);
@@ -143,29 +144,29 @@ void Application::buildMenu(int layerIndex)
 			}
 			else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i])) {
 				std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i]);
-				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n';
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n' << menuOption->text;
 			}
 		}
 		auto selectedMenu = currentMenu->menuOptions[currentMenu->selectedOption];
 		if (std::holds_alternative<std::shared_ptr<Menu>>(selectedMenu)) {
 			std::shared_ptr<Menu> menuOption = std::get<std::shared_ptr<Menu>>(selectedMenu);
 			if (layerIndex + 1 < this->menuLayers.size()) {
-				setConsoleColor(CYAN);
+				Console::getInstance()->setConsoleColor(CYAN);
 				std::cout << std::string(layerIndex * 2, ' ') << "V [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
-				resetConsoleColor();
+				Console::getInstance()->resetConsoleColor();
 				buildMenu(layerIndex + 1);
 			}
 			else {
-				setConsoleColor(CYAN);
+				Console::getInstance()->setConsoleColor(CYAN);
 				std::cout << std::string(layerIndex * 2, ' ') << "> [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
-				resetConsoleColor();
+				Console::getInstance()->resetConsoleColor();
 			}
 		}
 		else if (std::holds_alternative<std::shared_ptr<MenuOption>>(selectedMenu)) {
 			std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(selectedMenu);
-			setConsoleColor(CYAN);
-			std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n';
-			resetConsoleColor();
+			Console::getInstance()->setConsoleColor(CYAN);
+			std::cout << std::string(layerIndex * 2, ' ') << "  [" << currentMenu->selectedOption << "] " << menuOption->heading << '\n' << menuOption->text;
+			Console::getInstance()->resetConsoleColor();
 		}
 		for (int i = currentMenu->selectedOption + 1; i < currentMenu->menuOptions.size(); i++) {
 			if (std::holds_alternative<std::shared_ptr<Menu>>(currentMenu->menuOptions[i])) {
@@ -174,200 +175,96 @@ void Application::buildMenu(int layerIndex)
 			}
 			else if (std::holds_alternative<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i])) {
 				std::shared_ptr<MenuOption> menuOption = std::get<std::shared_ptr<MenuOption>>(currentMenu->menuOptions[i]);
-				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n';
+				std::cout << std::string(layerIndex * 2, ' ') << "  [" << i << "] " << menuOption->heading << '\n' << menuOption->text;
 			}
 		}
 	}
 }
 
-void Application::displayAudioDetails(Audio* audio, int index)
-{
-	setConsoleColor(BLUE);
-	bool selected = (audio == audioLibrary.getNextSelectedAudio().get());
-	if (selected)
-	{
-		Write("> ");
-	}
-	else
-	{
-		Write("> ");
-	}
-	std::cout << '[' << index << "] Audio Name: " << audio->getName() << '\n';
-	resetConsoleColor();
-	if (selected)
-	{
-		Artist* artist = audio->getArtist().get();
-		if (artist != nullptr)
-		{
-			Write("  Artist Name: " + artist->getName() + '\n');
-			std::cout << "  Artist Name: " << artist->getName() << '\n';
-		}
-		Write("  Duration: " + std::to_string(audio->getDuration()) + '\n');
-		Write("  Description: \n   -" + audio->getDescription() + '\n');
-	}
-}
+//void Application::displayAudioDetails(Audio* audio, int index)
+//{
+//	setConsoleColor(BLUE);
+//	bool selected = (audio == audioLibrary.getNextSelectedAudio().get());
+//	if (selected)
+//	{
+//		Write("> ");
+//	}
+//	else
+//	{
+//		Write("> ");
+//	}
+//	std::cout << '[' << index << "] Audio Name: " << audio->getName() << '\n';
+//	resetConsoleColor();
+//	if (selected)
+//	{
+//		Artist* artist = audio->getArtist().get();
+//		if (artist != nullptr)
+//		{
+//			Write("  Artist Name: " + artist->getName() + '\n');
+//			std::cout << "  Artist Name: " << artist->getName() << '\n';
+//		}
+//		Write("  Duration: " + std::to_string(audio->getDuration()) + '\n');
+//		Write("  Description: \n   -" + audio->getDescription() + '\n');
+//	}
+//}
 
-bool Application::addAudio(std::shared_ptr<MenuOption> menuOption, int keyCode, bool isArrowKey)
-{
-	switch (menuOption->stage)
-	{
-	case 0:
-		return true;
-		return false;
-	default:
-		break;
-	}
-	bool addAudio = YesOrNo("Would you like to add a Audio file?", keyCode, isArrowKey);
-	if (addAudio)
-	{
-		std::string name = EnterConsoleString("Please enter the Audio's Name:");
+//bool Application::addAudio(std::shared_ptr<MenuOption> menuOption, int keyCode, bool isArrowKey)
+//{
+//	switch (menuOption->stage)
+//	{
+//	case 0:
+//		return true;
+//		return false;
+//	default:
+//		break;
+//	}
+//	bool addAudio = YesOrNo("Would you like to add a Audio file?", keyCode, isArrowKey);
+//	if (addAudio)
+//	{
+//		std::string name = inputText("Please enter the Audio's Name:");
+//
+//		std::string description = inputText("Please enter the Audio's Description:");
+//
+//		int duration = inputNumber("Please enter the Audio's Duration:");
+//
+//		bool addArtist = YesOrNo("Do you want to add an Artist to this Audio?:", keyCode, isArrowKey);
+//
+//		std::shared_ptr<Artist> artist = nullptr;
+//		if (addArtist)
+//		{
+//			std::string artistName = inputText("Please enter the Artist's Name:");
+//			artist = std::make_shared<Artist>(artistName);
+//		}
+//		Audio newAudio = Audio(name, description, duration, artist);
+//		audioLibrary.addAudio(newAudio);
+//		setConsoleColor(GREEN);
+//		Write("- Audio Created: " + newAudio.getName() + '\n');
+//		resetConsoleColor();
+//		std::cin.ignore();
+//	}
+//}
 
-		std::string description = EnterConsoleString("Please enter the Audio's Description:");
+//bool Application::removeAudio(int keyCode, bool isArrowKey)
+//{
+//	bool removeAudio = YesOrNo("Would you like to remove a Audio file?", keyCode, isArrowKey);
+//	if (removeAudio)
+//	{
+//		std::string name = inputText("Please enter the Audio's Name:");
+//
+//		/*Audio newAudio = Audio(name, description, duration, artist);
+//		audioLibrary.addAudio(newAudio);
+//		buildMainMenu();*/
+//		setConsoleColor(GREEN);
+//		//std::cout << "- Audio Created: " << newAudio.getName() << '\n';
+//		resetConsoleColor();
+//		std::cin.ignore();
+//	}
+//}
 
-		int duration = EnterConsoleInt("Please enter the Audio's Duration:");
-
-		bool addArtist = YesOrNo("Do you want to add an Artist to this Audio?:", keyCode, isArrowKey);
-
-		std::shared_ptr<Artist> artist = nullptr;
-		if (addArtist)
-		{
-			std::string artistName = EnterConsoleString("Please enter the Artist's Name:");
-			artist = std::make_shared<Artist>(artistName);
-		}
-		Audio newAudio = Audio(name, description, duration, artist);
-		audioLibrary.addAudio(newAudio);
-		setConsoleColor(GREEN);
-		Write("- Audio Created: " + newAudio.getName() + '\n');
-		resetConsoleColor();
-		std::cin.ignore();
-	}
-}
-
-bool Application::removeAudio(int keyCode, bool isArrowKey)
-{
-	bool removeAudio = YesOrNo("Would you like to remove a Audio file?", keyCode, isArrowKey);
-	if (removeAudio)
-	{
-		std::string name = EnterConsoleString("Please enter the Audio's Name:");
-
-		/*Audio newAudio = Audio(name, description, duration, artist);
-		audioLibrary.addAudio(newAudio);
-		buildMainMenu();*/
-		setConsoleColor(GREEN);
-		//std::cout << "- Audio Created: " << newAudio.getName() << '\n';
-		resetConsoleColor();
-		std::cin.ignore();
-	}
-}
-
-bool Application::YesOrNo(std::string question, int keyCode, bool isArrowKey)
-{
-	this->changed = true;
-	bool yes = false;
-	if (this->changed)
-	{
-		this->changed = false;
-		Write(question + "\n[");
-		if (yes)
-		{
-			std::cout << "N |";
-			setConsoleColor(CYAN);
-			std::cout << " Y";
-			resetConsoleColor();
-		}
-		else
-		{
-			setConsoleColor(CYAN);
-			std::cout << "N ";
-			resetConsoleColor();
-			std::cout << "| Y";
-		}
-		std::cout << "]\n";
-	}
-	int keyCode;
-	bool isArrowKey = GetKey(keyCode);
-	if (isArrowKey) {
-		switch (keyCode)
-		{
-		case 0x4E: // N
-		case 0x4B: // Left
-			if (yes)
-			{
-				changed = true;
-				yes = false;
-			}
-			break;
-		case 0x59: // Y
-		case 0x4D: // Right
-			if (!yes)
-			{
-				changed = true;
-				yes = true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	else if (keyCode == VK_RETURN) {
-		return yes;
-	}
-	else if (keyCode == VK_ESCAPE) {
-		return false;
-	}
-}
-
-std::string Application::EnterConsoleString(std::string statement)
-{
-	this->changed = true;
-	while (true)
-	{
-		Write(statement + "\n> ");
-		std::string input;
-		std::cin >> input;
-		// https://stackoverflow.com/a/59690824
-		if (std::cin.fail()) {
-			std::cin.clear();
-#pragma push_macro("max")
-#undef max
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //skip bad input
-#pragma pop_macro("max")
-			Write("Please enter a valid string.\n");
-			_getch();
-		}
-		else {
-			return input;
-		}
-	}
-}
-
-int Application::EnterConsoleInt(std::string statement)
-{
-	this->changed = true;
-	while (true)
-	{
-		Write(statement + "\n> ");
-		int input;
-		std::cin >> input;
-		if (std::cin.fail()) {
-			std::cin.clear();
-#pragma push_macro("max")
-#undef max
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //skip bad input
-#pragma pop_macro("max")
-			Write("Please enter a valid number.\n");
-			_getch();
-		}
-		else {
-			return input;
-		}
-	}
-}
-
-void Application::Write(std::string message)
-{
-	std::cout << message;
-}
+//void Application::Write(std::string message)
+//{
+//	std::cout << message;
+//}
 
 int Application::mod(int left, int right) {
 	return (left + right) % right;
