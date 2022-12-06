@@ -1,9 +1,16 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <functional>
-class MenuOption {
-public:
+
+#include "Console.h"
+
+struct MenuOption {
+	virtual bool handle(int keyCode, bool isArrowKey) = 0;
+	void display() {
+		std::cout << text;
+	}
+	std::string text;
 	std::string heading;
-	std::function<bool(int, bool)> handle;
 	short stage = 0;
 };

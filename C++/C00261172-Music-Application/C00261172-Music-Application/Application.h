@@ -4,17 +4,6 @@
 
 #include <map> // For Menu
 
-// HANDLE
-#include <windows.h>
-
-// _getch
-#include <stdio.h>
-#include <conio.h>
-
-// std::streamsize>::max()
-#include <sstream>
-#include <limits>
-
 #include "Colour.h"
 
 #include <vector>
@@ -44,12 +33,7 @@ private:
 	std::string EnterConsoleString(std::string statement);
 	int EnterConsoleInt(std::string statement);
 	void Write(std::string message);
-	bool GetKey(int& keyCode);
-	void setConsoleColor(int color);
-	void resetConsoleColor();
-	void clear();
 	int mod(int left, int right); 
-	HANDLE hConsole; // Console window
 
 	AudioLibrary audioLibrary;
 	bool changed = true;

@@ -128,10 +128,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AddAudio.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Artist.h" />
     <ClInclude Include="CircularLinkedList.h" />
     <ClInclude Include="Colour.h" />
+    <ClInclude Include="Console.h" />
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="AudioLibrary.h" />
     <ClInclude Include="CharacterHelper.h" />
@@ -143,8 +145,10 @@
     <ClInclude Include="Audio.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddAudio.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Artist.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="DoubleLinkedNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AudioLibrary.cpp" />
