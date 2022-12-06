@@ -1,0 +1,46 @@
+
+Use Vector to store SelectedOption
+
+{
+	number selected,
+	menu viewer
+}
+
+Vector:
+{
+	{
+		1,
+		viewMainMenu,
+		handleMainMenu
+	},
+	{
+		0,
+		viewActionMenu,
+		handleActionMenu
+	},
+	{
+		0,
+		???
+	}
+}
+
+MenuOption [
+	Use a switch statement with numbers for it
+	Each statement will have instructions in each
+	We can have smaller methods
+]
+
+Smaller Methods:
+
+Yes | No : Keys [A, D, LEFT, RIGHT]
+
+Enter String : Keys [A-Za-z0-9]
+
+Enter Number : Keys [0-9]
+
+With this custom menu, we dont have to use std::cin! or another loop that captures characters
+
+
+You can extend the MenuOption class implement its virtual functions
+
+This would simplify the Application class

@@ -27,27 +27,13 @@ song-  store the song name, artist, and duration details.
 
 Use CircularDoubleLinkedList so the user can traverse through the playlist
 
-Use Vector to store SelectedOption
+Add Audio
+Delete Audio
+Play Audio
 
-{
-	number selected,
-	menu viewer
-}
+Create Playlist
+Add Audio to Playlist
+Remove Audio from Playlist
+Play all Audio from Playlist
 
-Vector:
-{
-	{
-		1,
-		viewMainMenu,
-		handleMainMenu
-	},
-	{
-		0,
-		viewActionMenu,
-		handleActionMenu
-	},
-	{
-		0,
-		???
-	}
-}
+Play all Audio in Program
