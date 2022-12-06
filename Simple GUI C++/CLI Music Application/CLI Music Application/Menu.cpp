@@ -29,7 +29,7 @@ void Menu::run() {
 		while (true) // Loop to check if user has inputted correct data type
 		{
 			// Starting text
-			std::cout << "Text based Menu for Set class by Chi\n\t1) Create Set\n\t2) Add to Set\n\t3) Print Set\n\t4) Remove All from Set\n\t5) Contains in Set\n\t6) Remove From Set\n\t7) Search in Set\n\t8) Clear Set\n\t9) Equals Set\n\t10) Generate 3 - 5 Sets\n\nEnter an Option: ";
+			std::cout << "CLI Music Application by Chi\n\t1) Add Audio\n\t2) Remove Audio\n\t3) Play Audio\n\t4) Create Playlist\n\t5) Add Audio to Playlist\n\t6) Remove Audio from Playlist\n\t7) Play all Audio from Playlist\n\t8) Play All Audio in Program\n\n> ";
 			std::cin >> selection;
 			if (!std::cin.fail()) {
 				break;
@@ -42,34 +42,31 @@ void Menu::run() {
 		switch (selection) // Menu system
 		{
 		case 1:
-			createSet();
+			addAudio();
 			break;
 		case 2:
-			addToSet();
+			removeAudio();
 			break;
 		case 3:
-			printSet();
+			playAudio();
 			break;
 		case 4:
-			removeAllFromSet();
+			createPlaylist();
 			break;
 		case 5:
-			containsInSet();
+			addAudioToPlaylist();
 			break;
 		case 6:
-			removeFromSet();
+			removeAudioFromPlaylist();
 			break;
 		case 7:
-			searchInSet();
+			playAllAudioInPlaylist();
 			break;
 		case 8:
-			clearSet();
+			playAllAudioInProgram();
 			break;
 		case 9:
-			equalsSet();
-			break;
-		case 10:
-			generateSets();
+			//generateSets();
 			break;
 		default:
 			SendError("Invalid Selection\n\n");
@@ -78,23 +75,23 @@ void Menu::run() {
 	}
 }
 
-/// <summary>
-/// Make 3 to 5 sets with a size of 1 to 5 with a random amount of keys
-/// </summary>
-void Menu::generateSets()
-{
-	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
-	int amountOfSets = 3 + rand() % 3;
-	for (int i = 0; i < amountOfSets; i++) { // Generate 3 - 5 sets
-		std::string randomString = random_string(5);	// Random 5 characters
-		int randomSize = 1 + rand() % 5;						// Make set with random 1 to 5 size
-		sets[randomString] = std::make_unique<Set>(randomSize);	// Create a unique pointer for the set with size of random
-		for (int i = 0; i < randomSize - rand() % randomSize; i++) {
-			sets[randomString]->add(random_string(5));
-		}
-	}
-	SendSuccess(std::to_string(amountOfSets) + " Sets have been generated.\n\n");
-}
+///// <summary>
+///// Make 3 to 5 sets with a size of 1 to 5 with a random amount of keys
+///// </summary>
+//void Menu::generateSets()
+//{
+//	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
+//	int amountOfSets = 3 + rand() % 3;
+//	for (int i = 0; i < amountOfSets; i++) { // Generate 3 - 5 sets
+//		std::string randomString = random_string(5);	// Random 5 characters
+//		int randomSize = 1 + rand() % 5;						// Make set with random 1 to 5 size
+//		sets[randomString] = std::make_unique<Set>(randomSize);	// Create a unique pointer for the set with size of random
+//		for (int i = 0; i < randomSize - rand() % randomSize; i++) {
+//			sets[randomString]->add(random_string(5));
+//		}
+//	}
+//	SendSuccess(std::to_string(amountOfSets) + " Sets have been generated.\n\n");
+//}
 
 /// <summary>
 /// Ask user to input a name for the set,
@@ -108,33 +105,33 @@ void Menu::generateSets()
 /// Set name being the index for the unordered_map to reference by and
 /// Set Size being the size of the set
 /// </summary>
-void Menu::createSet() {
-	std::string setName;
-	int setSize = 1;
+void Menu::addAudio() {
+	//std::string setName;
+	//int setSize = 1;
 
-	while (true) {
-		std::cout << "Enter the name of the new set: ";
-		std::cin >> setName;
-		if (!findSet(setName)) { // Check if set isn't inside of the unordered_map
-			break;
-		}
-		SendError("\nAnother Set with the same name was already made.\n\n");
-		if (!continueOperation()) {
-			return; // EXIT FUNCTION
-		}
-	}
-	while (true) {
-		std::cout << "\nEnter the size of the new set: \n";
-		std::cin >> setSize;
-		if (!std::cin.fail()) {
-			break;
-		}
-		SendError("Error: Numbers only.\n");
-		std::cin.clear();
-		std::cin.ignore(256, '\n');
-	}
-	sets[setName] = std::make_unique<Set>(setSize); // Create a unique pointer for the set
-	SendSuccess("Set: " + setName + " | Size: " + std::to_string(setSize) + " was created.\n\n");
+	//while (true) {
+	//	std::cout << "Enter the name of the new set: ";
+	//	std::cin >> setName;
+	//	if (!findSet(setName)) { // Check if set isn't inside of the unordered_map
+	//		break;
+	//	}
+	//	SendError("\nAnother Set with the same name was already made.\n\n");
+	//	if (!continueOperation()) {
+	//		return; // EXIT FUNCTION
+	//	}
+	//}
+	//while (true) {
+	//	std::cout << "\nEnter the size of the new set: \n";
+	//	std::cin >> setSize;
+	//	if (!std::cin.fail()) {
+	//		break;
+	//	}
+	//	SendError("Error: Numbers only.\n");
+	//	std::cin.clear();
+	//	std::cin.ignore(256, '\n');
+	//}
+	//sets[setName] = std::make_unique<Set>(setSize); // Create a unique pointer for the set
+	//SendSuccess("Set: " + setName + " | Size: " + std::to_string(setSize) + " was created.\n\n");
 }
 
 /// <summary>
@@ -143,57 +140,57 @@ void Menu::createSet() {
 /// if the Set already has the value, then display that it already has the value
 /// if the Set doesn't have the value and it isn't full then display that it was successful
 /// </summary>
-void Menu::addToSet() {
-	listSets();
-	std::string setName;
-	bool continueAdd = false;
+void Menu::removeAudio() {
+	//listSets();
+	//std::string setName;
+	//bool continueAdd = false;
 
-	setName = askForSet("");
-	if (setName == "") { return; }
+	//setName = askForSet("");
+	//if (setName == "") { return; }
 
-	while (true)
-	{
-		std::string value;
-		std::cout << "Please enter the value that you are going to put into the Set '" << setName << "':\n";
-		std::cin >> value;
-		std::cout << "\n";
-		switch (sets[setName]->add(value)) {
-		case SetResult::Success:
-			SendSuccess("Successfully added '" + value + "' to Set: " + setName + "\n");
-			break;
-		case SetResult::AlreadyIn:
-			SendError("Unable to add '" + value + "' to Set: " + setName + "\n", "Key is already inside of the Set.\n");
-			break;
-		case SetResult::Full:
-			SendError("Unable to add '" + value + "' to Set: " + setName + "\n", "Set is full.\n");
-			break;
-		}
-		if (!continueOperation()) {
-			return; // EXIT FUNCTION
-		}
-	}
+	//while (true)
+	//{
+	//	std::string value;
+	//	std::cout << "Please enter the value that you are going to put into the Set '" << setName << "':\n";
+	//	std::cin >> value;
+	//	std::cout << "\n";
+	//	switch (sets[setName]->add(value)) {
+	//	case SetResult::Success:
+	//		SendSuccess("Successfully added '" + value + "' to Set: " + setName + "\n");
+	//		break;
+	//	case SetResult::AlreadyIn:
+	//		SendError("Unable to add '" + value + "' to Set: " + setName + "\n", "Key is already inside of the Set.\n");
+	//		break;
+	//	case SetResult::Full:
+	//		SendError("Unable to add '" + value + "' to Set: " + setName + "\n", "Set is full.\n");
+	//		break;
+	//	}
+	//	if (!continueOperation()) {
+	//		return; // EXIT FUNCTION
+	//	}
+	//}
 }
 
 /// <summary>
 /// Ask the user for a Set and
 /// Call the print function in the Set class
 /// </summary>
-void Menu::printSet() {
-	listSets();
-	std::string setName;
+void Menu::playAudio() {
+	//listSets();
+	//std::string setName;
 
-	setName = askForSet("");
-	if (setName == "") { return; }
+	//setName = askForSet("");
+	//if (setName == "") { return; }
 
-	sets[setName]->print();
-	std::cout << "\n";
+	//sets[setName]->print();
+	//std::cout << "\n";
 }
 
 /// <summary>
 /// Ask for 2 Sets and remove all the keys inside of set1 that are also in set2
 /// </summary>
-void Menu::removeAllFromSet() {
-	listSets();
+void Menu::createPlaylist() {
+	/*listSets();
 	std::string setName1;
 	std::string setName2;
 
@@ -202,14 +199,14 @@ void Menu::removeAllFromSet() {
 	setName2 = askForSet("[2] ");
 	if (setName2 == "") { return; }
 
-	SendSuccess("Removed " + std::to_string(sets[setName1]->removeAll(sets[setName2])) + " keys inside of the Set: " + setName1 + "\n\n");
+	SendSuccess("Removed " + std::to_string(sets[setName1]->removeAll(sets[setName2])) + " keys inside of the Set: " + setName1 + "\n\n");*/
 }
 
 /// <summary>
 /// Ask the user for Set and find the value they inputted inside of the Set
 /// </summary>
-void Menu::containsInSet() {
-	listSets();
+void Menu::addAudioToPlaylist() {
+	/*listSets();
 	std::string setName;
 	std::string input;
 
@@ -226,7 +223,7 @@ void Menu::containsInSet() {
 	else {
 		SendError("'" + input + "' wasn't found inside of the Set: " + setName + "\n");
 	}
-	std::cout << "\n";
+	std::cout << "\n";*/
 }
 
 /// <summary>
@@ -236,34 +233,33 @@ void Menu::containsInSet() {
 /// If the key isn't found then warn them
 /// If the key is found then remove the key from the Set and send them a success message
 /// </summary>
-void Menu::removeFromSet() {
-	listSets();
-	std::string setName;
-	std::string input;
+void Menu::removeAudioFromPlaylist() {
+	//listSets();
+	//std::string setName;
+	//std::string input;
 
-	setName = askForSet("");
-	if (setName == "") { return; }
-	sets[setName]->print();
-	std::cout << "\n";
+	//setName = askForSet("");
+	//if (setName == "") { return; }
+	//sets[setName]->print();
+	//std::cout << "\n";
 
-	while (true) {
-		while (true) {
-			std::cout << "Enter a value you want to remove from the Set: " << setName << "\n";
-			std::cin >> input;
-			if (sets[setName]->remove(input)) {
-				break;
-			}
-			SendError("'" + input + "' wasn't found inside of the Set: " + setName + "\n\n");
-			if (!continueOperation()) {
-				return;
-			}
-		}
-		SendSuccess("'" + input + "' was removed from the Set: " + setName + "\n\n");
-		if (!continueOperation()) {
-			return;
-		}
-	}
-
+	//while (true) {
+	//	while (true) {
+	//		std::cout << "Enter a value you want to remove from the Set: " << setName << "\n";
+	//		std::cin >> input;
+	//		if (sets[setName]->remove(input)) {
+	//			break;
+	//		}
+	//		SendError("'" + input + "' wasn't found inside of the Set: " + setName + "\n\n");
+	//		if (!continueOperation()) {
+	//			return;
+	//		}
+	//	}
+	//	SendSuccess("'" + input + "' was removed from the Set: " + setName + "\n\n");
+	//	if (!continueOperation()) {
+	//		return;
+	//	}
+	//}
 }
 
 /// <summary>
@@ -272,8 +268,8 @@ void Menu::removeFromSet() {
 /// If key is found in Set then print out it's index position
 /// Else send error
 /// </summary>
-void Menu::searchInSet() {
-	listSets();
+void Menu::playAllAudioInPlaylist() {
+	/*listSets();
 	std::string setName;
 	std::string input;
 
@@ -296,21 +292,21 @@ void Menu::searchInSet() {
 			return;
 		}
 	}
-	SendSuccess("'" + input + "' was found inside of the Set: " + setName + " at index position: " + std::to_string(keyIndex - 1) + "\n\n");
+	SendSuccess("'" + input + "' was found inside of the Set: " + setName + " at index position: " + std::to_string(keyIndex - 1) + "\n\n");*/
 }
 
 /// <summary>
 /// Ask user for set and clear the set
 /// </summary>
-void Menu::clearSet() {
-	listSets();
+void Menu::playAllAudioInProgram() {
+	/*listSets();
 	std::string setName;
 
 	setName = askForSet("");
 	if (setName == "") { return; }
 	sets[setName]->clear();
 
-	SendSuccess("Set: '" + setName + "' was cleared!\n\n");
+	SendSuccess("Set: '" + setName + "' was cleared!\n\n");*/
 }
 
 /// <summary>
@@ -318,23 +314,23 @@ void Menu::clearSet() {
 ///	If the first set equals second set then
 /// Send success else Send error
 /// </summary>
-void Menu::equalsSet() {
-	listSets();
-	std::string setName1;
-	std::string setName2;
-
-	setName1 = askForSet("[1] ");
-	if (setName1 == "") { return; }
-	setName2 = askForSet("[2] ");
-	if (setName2 == "") { return; }
-
-	if (sets[setName1]->equals(sets[setName2])) {
-		SendSuccess("Set: '" + setName1 + "' equals to Set: " + setName2 + "!\n\n");
-	}
-	else {
-		SendError("Set: '" + setName1 + "' does not equals to Set: " + setName2 + "!\n\n");
-	}
-}
+//void Menu::equalsSet() {
+//	listSets();
+//	std::string setName1;
+//	std::string setName2;
+//
+//	setName1 = askForSet("[1] ");
+//	if (setName1 == "") { return; }
+//	setName2 = askForSet("[2] ");
+//	if (setName2 == "") { return; }
+//
+//	if (sets[setName1]->equals(sets[setName2])) {
+//		SendSuccess("Set: '" + setName1 + "' equals to Set: " + setName2 + "!\n\n");
+//	}
+//	else {
+//		SendError("Set: '" + setName1 + "' does not equals to Set: " + setName2 + "!\n\n");
+//	}
+//}
 
 /// <summary>
 /// Ask user if they would like to continue operation
@@ -362,7 +358,8 @@ bool Menu::continueOperation() {
 /// <param name="setName">Set Name</param>
 /// <returns>True = Found | False = not Found</returns>
 bool Menu::findSet(std::string setName) {
-	return sets.find(setName) != sets.end();
+	return false;
+	//return sets.find(setName) != sets.end();
 }
 
 /// <summary>
@@ -395,13 +392,13 @@ std::string Menu::askForSet(std::string index) {
 /// Loop through all of the keys inside of the sets unordered_map
 /// </summary>
 void Menu::listSets() {
-	std::string setsString;
+	/*std::string setsString;
 	for (std::unordered_map<std::string, std::unique_ptr<Set>>::iterator iter = sets.begin(); iter != sets.end(); ++iter)
 	{
 		setsString = setsString + "||" + iter->first;
 	}
 	setsString = setsString + "||\n\n";
-	std::cout << "Set Names: " << setsString;
+	std::cout << "Set Names: " << setsString;*/
 }
 
 /// <summary>

@@ -1,35 +1,31 @@
 #pragma once
-#include "Set.h"
-
 #include <iostream>
 #include <unordered_map>// Map data type for storing Sets
 #include <windows.h>	// WinApi header (Colours)
 #include <ctime>		// Current time for random
 #include <algorithm>	// For generating random string
 #include "Colour.h"		// Colours for the console
+#include "AudioLibrary.h"
 
 class Menu
 {
 public:
-	~Menu() {
-		sets.erase(sets.begin(), sets.end());
-	}
 	void run();
 	void generateSets();
-	void createSet();
-	void addToSet();
-	void printSet();
-	void removeAllFromSet();
-	void containsInSet();
-	void removeFromSet();
-	void searchInSet();
-	void clearSet();
+	void addAudio();
+	void removeAudio();
+	void playAudio();
+	void createPlaylist();
+	void addAudioToPlaylist();
+	void removeAudioFromPlaylist();
+	void playAllAudioInPlaylist();
+	void playAllAudioInProgram();
 	void equalsSet();
 
 private:
 	HANDLE hConsole; // Console window
 
-	std::unordered_map<std::string, std::unique_ptr<Set>> sets; // Set storage
+	std::shared_ptr<AudioLibrary> audioLibrary;
 
 	bool continueOperation();
 	bool findSet(std::string setName);

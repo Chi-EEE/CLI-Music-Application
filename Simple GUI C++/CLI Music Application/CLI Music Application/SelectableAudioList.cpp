@@ -29,7 +29,10 @@ std::shared_ptr<Audio> SelectableAudioList::getNextSelectedAudio()
 	return audio;
 }
 
-std::shared_ptr<Audio> SelectableAudioList::removeSelectedAudio()
+bool SelectableAudioList::removeSelectedAudio()
 {
-	return std::shared_ptr<Audio>();
+	if (this->selectedAudio == nullptr) {
+		return false;
+	}
+	return this->audioList.removeData(this->selectedAudio->data);
 }

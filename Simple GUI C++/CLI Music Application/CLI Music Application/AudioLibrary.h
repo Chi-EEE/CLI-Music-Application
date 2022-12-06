@@ -6,6 +6,7 @@ class AudioLibrary: public SelectableAudioList
 {
 public:
 	void addAudio(Audio audio);
+	void removeAudio(Audio audio);
 	int getAudioCount() { return this->audioList.getCount(); }
 private:
 

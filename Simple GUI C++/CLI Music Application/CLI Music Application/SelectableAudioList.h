@@ -8,7 +8,7 @@ class SelectableAudioList
 public:
 	std::shared_ptr<Audio> getSelectedAudio();
 	std::shared_ptr<Audio> getNextSelectedAudio();
-	std::shared_ptr<Audio> removeSelectedAudio();
+	bool removeSelectedAudio();
 
 protected:
 	CircularLinkedList<Audio> audioList = CircularLinkedList<Audio>();
