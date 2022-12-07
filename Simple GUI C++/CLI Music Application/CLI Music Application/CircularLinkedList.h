@@ -57,14 +57,14 @@ inline bool CircularLinkedList<T>::removeData(std::shared_ptr<T> data)
 					else if (temp == this->head) {
 						this->head = temp->next;
 					}
-					temp->next->prev = temp->next;
-					temp->prev->next = temp->prev;
+					temp->next->prev = temp->prev;
+					temp->prev->next = temp->next;
 				}
 				this->count--;
 				return true;
 			}
 			temp = temp->next;
-		} while (temp != nullptr && temp != this->tail);
+		} while (temp != nullptr && temp != this->head);
 	}
 	return false;
 }
