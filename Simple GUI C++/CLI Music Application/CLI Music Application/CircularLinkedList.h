@@ -28,10 +28,10 @@ inline void CircularLinkedList<T>::insert(std::shared_ptr<T> data)
 	}
 	else {
 		std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data));
-		this->head->next = node;
-		this->tail->prev = node;
-		node->next = this->tail;
-		node->prev = this->head;
+		this->head->prev = node;
+		this->tail->next = node;
+		node->next = this->head;
+		node->prev = this->tail;
 		this->head = node;
 	}
 	this->count++;
@@ -51,12 +51,19 @@ inline bool CircularLinkedList<T>::removeData(std::shared_ptr<T> data)
 				}
 				else
 				{
+					if (temp == this->tail) {
+						this->tail = temp->prev;
+					}
+					else if (temp == this->head) {
+						this->head = temp->next;
+					}
 					temp->next->prev = temp->next;
 					temp->prev->next = temp->prev;
 				}
 				this->count--;
 				return true;
 			}
+			temp = temp->next;
 		} while (temp != nullptr && temp != this->tail);
 	}
 	return false;
