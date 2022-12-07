@@ -31,7 +31,7 @@ void Menu::run() {
 		while (true) // Loop to check if user has inputted correct data type
 		{
 			// Starting text
-			std::cout << "CLI Music Application by Chi\n\t1) Add Audio\n\t2) Remove Audio\n\t3) Play Audio\n\t4) Create Artist\n\t5) Create Playlist\n\t6) Add Audio to Playlist\n\t7) Remove Audio from Playlist\n\t8) Play all Audio from Playlist\n\n> ";
+			std::cout << "CLI Music Application by Chi\n\t1) Add Audio\n\t2) Remove Audio\n\t3) Play Audio\n\t4) Create Artist\n\t5) Create Playlist\n\t6) Add Audio to Playlist\n\t7) Remove Audio from Playlist\n\t8) Play all Audio from Playlist\n\t9) Generate 3-5 Audio files\n\n> ";
 			std::cin >> selection;
 			if (!std::cin.fail()) {
 				break;
@@ -68,7 +68,7 @@ void Menu::run() {
 			playAllAudioInPlaylist();
 			break;
 		case 9:
-			//generateSets();
+			generateAudioFiles();
 			break;
 		default:
 			SendError("Invalid Selection\n\n");
@@ -77,23 +77,18 @@ void Menu::run() {
 	}
 }
 
-///// <summary>
-///// Make 3 to 5 sets with a size of 1 to 5 with a random amount of keys
-///// </summary>
-//void Menu::generateSets()
-//{
-//	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
-//	int amountOfSets = 3 + rand() % 3;
-//	for (int i = 0; i < amountOfSets; i++) { // Generate 3 - 5 sets
-//		std::string randomString = random_string(5);	// Random 5 characters
-//		int randomSize = 1 + rand() % 5;						// Make set with random 1 to 5 size
-//		sets[randomString] = std::make_unique<Set>(randomSize);	// Create a unique pointer for the set with size of random
-//		for (int i = 0; i < randomSize - rand() % randomSize; i++) {
-//			sets[randomString]->add(random_string(5));
-//		}
-//	}
-//	SendSuccess(std::to_string(amountOfSets) + " Sets have been generated.\n\n");
-//}
+void Menu::generateAudioFiles()
+{
+	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
+	int amountOfSets = 3 + rand() % 3;
+	for (int i = 0; i < amountOfSets; i++) { // Generate 3 - 5 sets
+		std::string randomName = random_string(5);	// Random 5 characters
+		std::string randomDescription = random_string(5);
+		int randomDuration = 1 + rand() % 30;
+		audioLibrary->addAudio(std::make_shared<Audio>(randomName, randomDescription, randomDuration));
+	}
+	SendSuccess(std::to_string(amountOfSets) + " Audio Files have been generated.\n\n");
+}
 
 
 void Menu::addAudio() {

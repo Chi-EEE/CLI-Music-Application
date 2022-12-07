@@ -12,7 +12,7 @@ class Menu
 {
 public:
 	void run();
-	//void generateSets();
+	void generateAudioFiles();
 	void addAudio();
 	void removeAudio();
 	void playAudio();
@@ -33,7 +33,6 @@ private:
 	bool continueOperation();
 	bool YesOrNo(std::string question);
 	std::shared_ptr<Audio> askForAudio(std::string& audioName, std::shared_ptr<AudioList> audioList);
-	//std::shared_ptr<Audio> askForAudio(std::string& audioName);
 	std::shared_ptr<Playlist> askForPlaylist(std::string& playlistName);
 	void displayAllAudio();
 	void displayAllPlaylists();
