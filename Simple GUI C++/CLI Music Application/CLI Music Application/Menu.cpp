@@ -145,29 +145,15 @@ void Menu::removeAudio() {
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
 	}
-	if (audioName == "") { return; }
-
-	//while (true)
-	//{
-	//	std::string value;
-	//	std::cout << "Please enter the value that you are going to put into the Set '" << setName << "':\n";
-	//	std::cin >> value;
-	//	std::cout << "\n";
-	//	switch (sets[setName]->add(value)) {
-	//	case SetResult::Success:
-	//		SendSuccess("Successfully added '" + value + "' to Set: " + setName + "\n");
-	//		break;
-	//	case SetResult::AlreadyIn:
-	//		SendError("Unable to add '" + value + "' to Set: " + setName + "\n", "Key is already inside of the Set.\n");
-	//		break;
-	//	case SetResult::Full:
-	//		SendError("Unable to add '" + value + "' to Set: " + setName + "\n", "Set is full.\n");
-	//		break;
-	//	}
-	//	if (!continueOperation()) {
-	//		return; // EXIT FUNCTION
-	//	}
-	//}
+	if (!continueOperation()) {
+		return; // EXIT FUNCTION
+	}
+	if (audioLibrary->removeAudio(audio)) {
+		SendSuccess("Removed " + audioName + " from the Audio Library\n");
+	}
+	else {
+		SendError("Unable to remove " + audioName + "\n");
+	}
 }
 
 /// <summary>

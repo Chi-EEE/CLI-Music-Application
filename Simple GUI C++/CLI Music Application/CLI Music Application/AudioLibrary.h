@@ -7,8 +7,6 @@ public:
 	AudioLibrary() {
 
 	}
-	void addAudio(Audio audio);
-	std::string getAllAudio();
 private:
 
 };

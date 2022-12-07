@@ -6,7 +6,10 @@ class AudioList
 {
 public:
 	std::shared_ptr<Audio> getAudioByName(std::string audioName);
+	void addAudio(Audio audio);
 	bool removeAudio(std::shared_ptr<Audio> audio);
+	bool removeAudioByName(std::string audioName);
+	std::string getAllAudio();
 	int getAudioCount() { return this->audioList.getCount(); }
 
 protected:
