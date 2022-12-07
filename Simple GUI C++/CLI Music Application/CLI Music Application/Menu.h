@@ -29,7 +29,7 @@ private:
 
 	bool continueOperation();
 	bool findSet(std::string setName);
-	//std::string askForSet(std::string index);
+	std::shared_ptr<Audio> askForAudio(std::string& audioName);
 	void displayAllAudio();
 	void SendSuccess(std::string successMessage);
 	void SendError(std::string errorMessage);

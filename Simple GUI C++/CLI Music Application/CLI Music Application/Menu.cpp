@@ -128,31 +128,16 @@ void Menu::addAudio() {
 void Menu::removeAudio() {
 	displayAllAudio();
 
-	std::shared_ptr<Audio> audio;
 	std::string audioName;
-
-	while (true) {
-		std::cout << "Please enter the Audio's Name: ";
-		std::cin >> audioName;
-		audio = audioLibrary->getAudioByName(audioName);
-		if (audio != nullptr) {
-			break;
-		}
-		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
-		if (!continueOperation()) {
-			return; // EXIT FUNCTION
-		}
-		std::cin.clear();
-		std::cin.ignore(256, '\n');
-	}
+	std::shared_ptr<Audio> audio = askForAudio(audioName);
 	if (!continueOperation()) {
 		return; // EXIT FUNCTION
 	}
 	if (audioLibrary->removeAudio(audio)) {
-		SendSuccess("Removed " + audioName + " from the Audio Library\n");
+		SendSuccess("Removed " + audio->getName() + " from the Audio Library.\n");
 	}
 	else {
-		SendError("Unable to remove " + audioName + "\n");
+		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
 	}
 }
 
@@ -322,6 +307,27 @@ bool Menu::continueOperation() {
 bool Menu::findSet(std::string setName) {
 	return false;
 	//return sets.find(setName) != sets.end();
+}
+
+std::shared_ptr<Audio> Menu::askForAudio(std::string &audioName)
+{
+	std::shared_ptr<Audio> audio = nullptr;
+
+	while (true) {
+		std::cout << "Please enter the Audio's Name: ";
+		std::cin >> audioName;
+		audio = audioLibrary->getAudioByName(audioName);
+		if (audio != nullptr) {
+			break;
+		}
+		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
+		if (!continueOperation()) {
+			return; // EXIT FUNCTION
+		}
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+	}
+	return audio;
 }
 
 void Menu::displayAllAudio() {
