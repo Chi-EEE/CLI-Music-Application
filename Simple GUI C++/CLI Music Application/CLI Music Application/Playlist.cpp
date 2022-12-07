@@ -5,7 +5,7 @@ Playlist::Playlist(std::string name): AudioList()
 	this->name = name;
 }
 
-void Playlist::addAudio(Audio audio)
+std::string Playlist::getName()
 {
-	//this->audioList.insert(audio);
+	return this->name;
 }

@@ -5,7 +5,7 @@ class Playlist: public AudioList
 {
 public:
 	Playlist(std::string name);
-	void addAudio(Audio audio);
+	std::string getName();
 private:
 	std::string name;
 };

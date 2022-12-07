@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include "Artist.h"
+
 class Audio
 {
 public:
@@ -10,7 +11,7 @@ public:
 		this->name = name;
 		this->description = description;
 		this->duration = duration;
-		this->artist = std::shared_ptr<Artist>(nullptr);
+		this->artist = nullptr;
 	}
 	Audio(std::string name, std::string description, float duration, std::shared_ptr<Artist> artist) {
 		this->name = name;

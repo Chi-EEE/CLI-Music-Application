@@ -15,14 +15,26 @@ std::shared_ptr<Audio> AudioList::getAudioByName(std::string audioName)
 	return nullptr;
 }
 
-void AudioList::addAudio(Audio audio)
+void AudioList::addAudio(std::shared_ptr<Audio> audio)
 {
-	this->audioList.insert(std::make_shared<Audio>(audio));
+	this->audioList.insert(audio);
 }
 
 bool AudioList::removeAudio(std::shared_ptr<Audio> audio)
 {
 	return audioList.removeData(audio);
+}
+
+void AudioList::playAllAudio()
+{
+	if (getAudioCount() > 0) {
+		auto temp = this->audioList.getHead();
+		do
+		{
+			temp->data->play();
+			temp = temp->next;
+		} while (temp != nullptr && temp != audioList.getTail());
+	}
 }
 
 bool AudioList::removeAudioByName(std::string audioName)
@@ -49,36 +61,3 @@ std::string AudioList::getAllAudio()
 	result += "\n\n";
 	return result;
 }
-
-//std::shared_ptr<Audio> AudioList::getSelectedAudio()
-//{
-//	if (this->selectedAudio == nullptr) {
-//		this->selectedAudio = this->audioList.getHead();
-//		DoubleLinkedNode<Audio>* audioNode = this->selectedAudio.get();
-//		if (audioNode == nullptr) {
-//			return nullptr;
-//		}
-//		std::shared_ptr<Audio> audio = audioNode->data;
-//		return audio;
-//	}
-//	return this->selectedAudio.get()->data;
-//}
-//
-//std::shared_ptr<Audio> AudioList::getNextSelectedAudio()
-//{
-//	this->selectedAudio = this->selectedAudio.get()->next;
-//	DoubleLinkedNode<Audio>* audioNode = this->selectedAudio.get();
-//	if (audioNode == nullptr) {
-//		return nullptr;
-//	}
-//	std::shared_ptr<Audio> audio = audioNode->data;
-//	return audio;
-//}
-//
-//bool AudioList::removeSelectedAudio()
-//{
-//	if (this->selectedAudio == nullptr) {
-//		return false;
-//	}
-//	return this->audioList.removeData(this->selectedAudio->data);
-//}

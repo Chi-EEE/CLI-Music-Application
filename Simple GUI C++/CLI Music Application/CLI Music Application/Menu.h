@@ -6,6 +6,7 @@
 #include <algorithm>	// For generating random string
 #include "Colour.h"		// Colours for the console
 #include "AudioLibrary.h"
+#include "Playlist.h"
 
 class Menu
 {
@@ -15,22 +16,27 @@ public:
 	void addAudio();
 	void removeAudio();
 	void playAudio();
+	std::shared_ptr<Artist> createArtist();
 	void createPlaylist();
 	void addAudioToPlaylist();
 	void removeAudioFromPlaylist();
 	void playAllAudioInPlaylist();
 	void playAllAudioInProgram();
-	//void equalsSet();
 
 private:
 	HANDLE hConsole; // Console window
 
 	std::shared_ptr<AudioLibrary> audioLibrary;
+	CircularLinkedList<Playlist> playlists;
+	std::vector<std::shared_ptr<Artist>> artists;
 
 	bool continueOperation();
-	bool findSet(std::string setName);
+	bool YesOrNo(std::string question);
 	std::shared_ptr<Audio> askForAudio(std::string& audioName);
+	std::shared_ptr<Playlist> askForPlaylist(std::string& playlistName);
+	std::shared_ptr<Playlist> askForArtist(std::string& artistName);
 	void displayAllAudio();
+	void displayAllPlaylists();
 	void SendSuccess(std::string successMessage);
 	void SendError(std::string errorMessage);
 	void SendError(std::string errorMessage, std::string extraMessage);

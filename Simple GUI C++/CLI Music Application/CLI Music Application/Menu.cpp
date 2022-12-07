@@ -30,7 +30,7 @@ void Menu::run() {
 		while (true) // Loop to check if user has inputted correct data type
 		{
 			// Starting text
-			std::cout << "CLI Music Application by Chi\n\t1) Add Audio\n\t2) Remove Audio\n\t3) Play Audio\n\t4) Create Playlist\n\t5) Add Audio to Playlist\n\t6) Remove Audio from Playlist\n\t7) Play all Audio from Playlist\n\t8) Play All Audio in Program\n\n> ";
+			std::cout << "CLI Music Application by Chi\n\t1) Add Audio\n\t2) Remove Audio\n\t3) Play Audio\n\t4) Create Artist\n\t5) Create Playlist\n\t6) Add Audio to Playlist\n\t7) Remove Audio from Playlist\n\t8) Play all Audio from Playlist\n\n> ";
 			std::cin >> selection;
 			if (!std::cin.fail()) {
 				break;
@@ -52,19 +52,19 @@ void Menu::run() {
 			playAudio();
 			break;
 		case 4:
-			createPlaylist();
+			createArtist();
 			break;
 		case 5:
-			addAudioToPlaylist();
+			createPlaylist();
 			break;
 		case 6:
-			removeAudioFromPlaylist();
+			addAudioToPlaylist();
 			break;
 		case 7:
-			playAllAudioInPlaylist();
+			removeAudioFromPlaylist();
 			break;
 		case 8:
-			playAllAudioInProgram();
+			playAllAudioInPlaylist();
 			break;
 		case 9:
 			//generateSets();
@@ -120,174 +120,11 @@ void Menu::addAudio() {
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
 	}
-	SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " was created.\n\n");
-	this->audioLibrary->addAudio(Audio(audioName, audioDescription, audioDuration));
-}
 
-
-void Menu::removeAudio() {
-	displayAllAudio();
-
-	std::string audioName;
-	std::shared_ptr<Audio> audio = askForAudio(audioName);
-	if (!continueOperation()) {
-		return; // EXIT FUNCTION
-	}
-	if (audioLibrary->removeAudio(audio)) {
-		SendSuccess("Removed " + audio->getName() + " from the Audio Library.\n");
-	}
-	else {
-		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
-	}
-}
-
-/// <summary>
-/// Ask the user for a Set and
-/// Call the print function in the Set class
-/// </summary>
-void Menu::playAudio() {
-	//listSets();
-	//std::string setName;
-
-	//setName = askForSet("");
-	//if (setName == "") { return; }
-
-	//sets[setName]->print();
-	//std::cout << "\n";
-}
-
-/// <summary>
-/// Ask for 2 Sets and remove all the keys inside of set1 that are also in set2
-/// </summary>
-void Menu::createPlaylist() {
-	/*listSets();
-	std::string setName1;
-	std::string setName2;
-
-	setName1 = askForSet("[1] ");
-	if (setName1 == "") { return; }
-	setName2 = askForSet("[2] ");
-	if (setName2 == "") { return; }
-
-	SendSuccess("Removed " + std::to_string(sets[setName1]->removeAll(sets[setName2])) + " keys inside of the Set: " + setName1 + "\n\n");*/
-}
-
-/// <summary>
-/// Ask the user for Set and find the value they inputted inside of the Set
-/// </summary>
-void Menu::addAudioToPlaylist() {
-	/*listSets();
-	std::string setName;
-	std::string input;
-
-	setName = askForSet("");
-	if (setName == "") { return; }
-
-	std::cout << "Enter a value that will want to find in the Set: " << setName << "\n";
-	std::cin >> input;
-
-	std::cout << "\n";
-	if (sets[setName]->contains(input)) {
-		SendSuccess("Found '" + input + "' inside of the Set: " + setName + "\n");
-	}
-	else {
-		SendError("'" + input + "' wasn't found inside of the Set: " + setName + "\n");
-	}
-	std::cout << "\n";*/
-}
-
-/// <summary>
-/// Ask user for set.
-/// If they have entered a valid Set then
-/// Ask user to delete a key from the Set,
-/// If the key isn't found then warn them
-/// If the key is found then remove the key from the Set and send them a success message
-/// </summary>
-void Menu::removeAudioFromPlaylist() {
-	//listSets();
-	//std::string setName;
-	//std::string input;
-
-	//setName = askForSet("");
-	//if (setName == "") { return; }
-	//sets[setName]->print();
-	//std::cout << "\n";
-
-	//while (true) {
-	//	while (true) {
-	//		std::cout << "Enter a value you want to remove from the Set: " << setName << "\n";
-	//		std::cin >> input;
-	//		if (sets[setName]->remove(input)) {
-	//			break;
-	//		}
-	//		SendError("'" + input + "' wasn't found inside of the Set: " + setName + "\n\n");
-	//		if (!continueOperation()) {
-	//			return;
-	//		}
-	//	}
-	//	SendSuccess("'" + input + "' was removed from the Set: " + setName + "\n\n");
-	//	if (!continueOperation()) {
-	//		return;
-	//	}
-	//}
-}
-
-/// <summary>
-/// Ask user for set,
-/// Ask user for key to find in set.
-/// If key is found in Set then print out it's index position
-/// Else send error
-/// </summary>
-void Menu::playAllAudioInPlaylist() {
-	/*listSets();
-	std::string setName;
-	std::string input;
-
-	setName = askForSet("");
-	if (setName == "") { return; }
-	sets[setName]->print();
-	std::cout << "\n";
-
-	int keyIndex = 0;
-
+	bool confirmAddArtist = false;
 	while (true) {
-		std::cout << "Enter a value that will want to find it's index in the Set: " << setName << "\n";
-		std::cin >> input;
-		keyIndex = sets[setName]->search(input);
-		if (keyIndex) {
-			break;
-		}
-		SendError("'" + input + "' wasn't found inside of the Set: " + setName + "\n\n");
-		if (!continueOperation()) {
-			return;
-		}
-	}
-	SendSuccess("'" + input + "' was found inside of the Set: " + setName + " at index position: " + std::to_string(keyIndex - 1) + "\n\n");*/
-}
-
-/// <summary>
-/// Ask user for set and clear the set
-/// </summary>
-void Menu::playAllAudioInProgram() {
-	/*listSets();
-	std::string setName;
-
-	setName = askForSet("");
-	if (setName == "") { return; }
-	sets[setName]->clear();
-
-	SendSuccess("Set: '" + setName + "' was cleared!\n\n");*/
-}
-
-/// <summary>
-/// Ask user if they would like to continue operation
-/// </summary>
-/// <returns>True = continue/ False = stop</returns>
-bool Menu::continueOperation() {
-	bool continueOp = false;
-	while (true) {
-		std::cout << "\nWould you like to continue:\n\t0 = No\n\t1 = Yes\n> ";
-		std::cin >> continueOp;
+		std::cout << "\nWould you like to add an Artist to this Audio:\n\t0 = No\n\t1 = Yes\n> ";
+		std::cin >> confirmAddArtist;
 		if (!std::cin.fail()) {
 			break;
 		}
@@ -296,23 +133,185 @@ bool Menu::continueOperation() {
 		std::cin.ignore(256, '\n');
 	}
 	std::cout << "\n";
-	return continueOp;
+	if (confirmAddArtist) {
+		if (this->artists.size() == 0) {
+			SendError("There are no artists available.");
+			if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
+				auto artist = createArtist();
+				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
+				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n\n");
+			}
+			else {
+				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n\n");
+			}
+		}
+		else {
+			if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
+				auto artist = createArtist();
+				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
+				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n\n");
+			}
+			else {
+				std::cout << "Artists:\n";
+				for (int i = 0; i < artists.size(); i++) {
+					std::cout << '[' << i << "] '" << artists[i]->getName() << "'\n";
+				}
+				int artistIndex;
+				do {
+					std::cout << "Please enter the index of the artist you want to add to this audio\n > ";
+					std::cin >> artistIndex;
+					if (!std::cin.fail() && artistIndex >= 0 && artistIndex < artists.size()) {
+						break;
+					}
+					SendError("\nError: Please enter a number between 0 and " + std::to_string(artists.size() - 1) + "\n\n");
+					std::cin.clear();
+					std::cin.ignore(256, '\n');
+				} while (true);
+				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex]));
+				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n\n");
+			}
+		}
+	}
+	else {
+		this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+		SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n\n");
+	}
+}
+
+void Menu::removeAudio() {
+	displayAllAudio();
+
+	std::string audioName;
+	std::shared_ptr<Audio> audio = askForAudio(audioName);
+	if (audio == nullptr) {
+		return; // EXIT FUNCTION
+	}
+	if (audioLibrary->removeAudio(audio)) {
+		if (playlists.getCount() > 0) {
+			auto temp = playlists.getHead();
+			do
+			{
+				temp->data->removeAudio(audio);
+				temp = temp->next;
+			} while (temp != nullptr && temp != playlists.getTail());
+		}
+		SendSuccess("Removed '" + audio->getName() + "' from the entire Application.\n\n");
+	}
+	else {
+		SendError("Unable to find Audio with the name '" + audioName + "'.\n\n");
+	}
+}
+
+void Menu::playAudio() {
+	displayAllAudio();
+	std::string audioName;
+	std::shared_ptr<Audio> audio = askForAudio(audioName);
+	if (audio != nullptr) {
+		audio->play();
+	}
+}
+
+std::shared_ptr<Artist> Menu::createArtist() {
+	std::string artistName;
+
+	std::cout << "Please enter the Artist's Name: ";
+	std::cin >> artistName;
+	auto artist = std::make_shared<Artist>(artistName);
+	this->artists.push_back(artist);
+	SendSuccess("Created Artist: " + artistName + ".\n\n");
+	return artist;
+}
+
+void Menu::createPlaylist() {
+	std::string playlistName;
+	std::cout << "Please enter the Playlist's Name: ";
+	std::cin >> playlistName;
+	playlists.insert(std::make_shared<Playlist>(playlistName));
+	SendSuccess("Created playlist '" + playlistName + "'.\n\n");
+}
+
+void Menu::addAudioToPlaylist() {
+	if (playlists.getCount() == 0) {
+		SendError("There are no playlists in this Application. Please add a playlist.\n");
+		return;
+	}
+	if (audioLibrary->getAudioCount() == 0) {
+		SendError("There are no audio files in this Application. Please add an Audio file.\n");
+		return;
+	}
+	displayAllPlaylists();
+
+	std::string playlistName;
+	std::shared_ptr<Playlist> playlist = askForPlaylist(playlistName);
+	if (playlist != nullptr) {
+		displayAllAudio();
+		std::string audioName;
+		std::shared_ptr<Audio> audio = askForAudio(audioName);
+		if (audio != nullptr) {
+			playlist->addAudio(audio);
+			SendSuccess("'" + audioName + "' was added to the playlist '" + playlistName + "'.\n\n");
+		}
+	}
+}
+
+void Menu::removeAudioFromPlaylist() {
+
+}
+
+void Menu::playAllAudioInPlaylist()
+{
+	if (playlists.getCount() == 0) {
+		SendError("There are no playlists in this Application. Please add a playlist.\n");
+		return;
+	}
+	displayAllPlaylists();
+	std::string playlistName;
+	std::shared_ptr<Playlist> playlist = askForPlaylist(playlistName);
+	if (playlist != nullptr)
+	{
+		std::cout << "Now playing " << playlist->getName() << "\n";
+		playlist->playAllAudio();
+	}
+}
+
+void Menu::playAllAudioInProgram()
+{
+	std::cout << "Now playing all the audio files in this application.\n\n";
+	audioLibrary->playAllAudio();
 }
 
 /// <summary>
-/// Checks if the set is available in the unordered_map
+/// Ask user if they would like to continue operation
 /// </summary>
-/// <param name="setName">Set Name</param>
-/// <returns>True = Found | False = not Found</returns>
-bool Menu::findSet(std::string setName) {
-	return false;
-	//return sets.find(setName) != sets.end();
+/// <returns>True = continue / False = stop</returns>
+bool Menu::continueOperation() {
+	return YesOrNo("\nWould you like to continue:\n\t0 = No\n\t1 = Yes\n> ");
 }
 
-std::shared_ptr<Audio> Menu::askForAudio(std::string &audioName)
-{
-	std::shared_ptr<Audio> audio = nullptr;
+bool Menu::YesOrNo(std::string question) {
+	bool confirmation = false;
+	while (true) {
+		std::cout << question;
+		std::cin >> confirmation;
+		if (!std::cin.fail()) {
+			break;
+		}
+		SendError("\nError: 0 or 1");
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+	}
+	std::cout << "\n";
+	return confirmation;
+}
 
+std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName)
+{
+	if (audioLibrary->getAudioCount() == 0) {
+		SendError("There are no audio files in this Application. Please add an Audio file.\n");
+		return nullptr;
+	}
+	std::shared_ptr<Audio> audio = nullptr;
 	while (true) {
 		std::cout << "Please enter the Audio's Name: ";
 		std::cin >> audioName;
@@ -322,7 +321,7 @@ std::shared_ptr<Audio> Menu::askForAudio(std::string &audioName)
 		}
 		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
 		if (!continueOperation()) {
-			return; // EXIT FUNCTION
+			return nullptr; // EXIT FUNCTION
 		}
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
@@ -330,64 +329,52 @@ std::shared_ptr<Audio> Menu::askForAudio(std::string &audioName)
 	return audio;
 }
 
-void Menu::displayAllAudio() {
-	std::cout << "All Audio in the Program: " << audioLibrary->getAllAudio();
+std::shared_ptr<Playlist> Menu::askForPlaylist(std::string& playlistName)
+{
+	if (playlists.getCount() == 0) {
+		SendError("There are no playlists in this Application. Please add a playlist.\n");
+		return nullptr;
+	}
+	while (true) {
+		std::cout << "Please enter the Playlist's Name: ";
+		std::cin >> playlistName;
+		auto temp = playlists.getHead();
+		do
+		{
+			if (playlistName == temp->data->getName()) {
+				return temp->data;
+			}
+			temp = temp->next;
+		} while (temp != nullptr && temp != playlists.getTail());
+		SendError("Unable to find Playlist with the name '" + playlistName + "'.\n");
+		if (!continueOperation()) {
+			return nullptr; // EXIT FUNCTION
+		}
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+	}
+	return nullptr;
 }
 
-bool InputText(std::string& text, int keyCode, bool isArrowKey)
+void Menu::displayAllAudio()
 {
-	switch (keyCode) {
-	case VK_BACK:
-		if (VK_CONTROL) {
-			text = "";
-		}
-		else if (text.length() > 0) {
-			text.pop_back();
-		}
-		return false;
-	case VK_SPACE:
-		text += " ";
-		return false;
-	case VK_RETURN:
-		return true;
-	default:
-		if (!isArrowKey) {
-			if (keyCode >= 97 && keyCode <= 122) { // a - z
-				text += 'a' + keyCode - 97;
-			}
-			else if (keyCode >= 65 && keyCode <= 90) { // A - Z
-				text += 'A' + keyCode - 65;
-			}
-			else if (keyCode >= 48 && keyCode <= 57) { // 0 - 9
-				text += '0' + keyCode - 48;
-			}
-		}
-		return false;
-	}
+	std::cout << "All Audio files in the Program: " << audioLibrary->getAllAudio();
 }
 
-bool InputNumber(int& number, int keyCode, bool isArrowKey)
-{
-	switch (keyCode) {
-	case VK_BACK:
+void Menu::displayAllPlaylists() {
+	std::cout << "All Playlists in the Program: ";
+	std::string result = "";
+	if (this->playlists.getCount() > 0)
 	{
-		if (VK_CONTROL) {
-			number = 0;
-		}
-		else if (number > 0) {
-			number /= 10;
-		}
-		return false;
+		auto temp = this->playlists.getHead();
+		do {
+			result += "||" + temp->data->getName();
+			temp = temp->next;
+		} while (temp != nullptr && temp != this->playlists.getTail());
+		result += "||";
 	}
-	case VK_RETURN:
-	{
-		return number > 0;
-	}
-	}
-	if (keyCode >= 48 && keyCode <= 57) { // 0 - 9
-		number += keyCode - 48;
-	}
-	return false;
+	result += "\n\n";
+	std::cout << result;
 }
 
 /// <summary>
