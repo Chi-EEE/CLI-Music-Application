@@ -32,9 +32,9 @@ private:
 
 	bool continueOperation();
 	bool YesOrNo(std::string question);
-	std::shared_ptr<Audio> askForAudio(std::string& audioName);
+	std::shared_ptr<Audio> askForAudio(std::string& audioName, std::shared_ptr<AudioList> audioList);
+	//std::shared_ptr<Audio> askForAudio(std::string& audioName);
 	std::shared_ptr<Playlist> askForPlaylist(std::string& playlistName);
-	std::shared_ptr<Playlist> askForArtist(std::string& artistName);
 	void displayAllAudio();
 	void displayAllPlaylists();
 	void SendSuccess(std::string successMessage);

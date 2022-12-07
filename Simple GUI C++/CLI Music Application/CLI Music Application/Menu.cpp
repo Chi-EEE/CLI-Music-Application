@@ -11,7 +11,8 @@ std::string random_string(size_t length)
 	{
 		const char charset[] =
 			"0123456789"
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz";
 		const size_t max_index = (sizeof(charset) - 1);
 		return charset[rand() % max_index];
 	};
@@ -100,8 +101,18 @@ void Menu::addAudio() {
 	std::string audioDescription;
 	int audioDuration = 1;
 
-	std::cout << "Please enter the Audio's Name: ";
-	std::cin >> audioName;
+	while (true) {
+		std::cout << "Please enter the Audio's Name: ";
+		std::cin >> audioName;
+		if (audioLibrary->getAudioByName(audioName) == nullptr)
+		{
+			break;
+		}
+		SendError("There is already an Audio file with the name '" + audioName + "'!\nIf you wish to update the Audio, please remove and re-add it.");
+		if (!continueOperation()) {
+			return; // EXIT FUNCTION
+		}
+	}
 	if (!continueOperation()) {
 		return; // EXIT FUNCTION
 	}
@@ -161,14 +172,14 @@ void Menu::addAudio() {
 				do {
 					std::cout << "Please enter the index of the artist you want to add to this audio\n > ";
 					std::cin >> artistIndex;
-					if (!std::cin.fail() && artistIndex >= 0 && artistIndex < artists.size()) {
+					if (!std::cin.fail() && artistIndex >= 1 && artistIndex <= artists.size()) {
 						break;
 					}
-					SendError("\nError: Please enter a number between 0 and " + std::to_string(artists.size() - 1) + "\n\n");
+					SendError("\nError: Please enter a number between 1 and " + std::to_string(artists.size()) + "\n\n");
 					std::cin.clear();
 					std::cin.ignore(256, '\n');
 				} while (true);
-				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex]));
+				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
 				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n\n");
 			}
 		}
@@ -183,7 +194,7 @@ void Menu::removeAudio() {
 	displayAllAudio();
 
 	std::string audioName;
-	std::shared_ptr<Audio> audio = askForAudio(audioName);
+	std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
 	if (audio == nullptr) {
 		return; // EXIT FUNCTION
 	}
@@ -206,7 +217,7 @@ void Menu::removeAudio() {
 void Menu::playAudio() {
 	displayAllAudio();
 	std::string audioName;
-	std::shared_ptr<Audio> audio = askForAudio(audioName);
+	std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
 	if (audio != nullptr) {
 		audio->play();
 	}
@@ -247,7 +258,7 @@ void Menu::addAudioToPlaylist() {
 	if (playlist != nullptr) {
 		displayAllAudio();
 		std::string audioName;
-		std::shared_ptr<Audio> audio = askForAudio(audioName);
+		std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
 		if (audio != nullptr) {
 			playlist->addAudio(audio);
 			SendSuccess("'" + audioName + "' was added to the playlist '" + playlistName + "'.\n\n");
@@ -255,8 +266,29 @@ void Menu::addAudioToPlaylist() {
 	}
 }
 
-void Menu::removeAudioFromPlaylist() {
+void Menu::removeAudioFromPlaylist() 
+{
+	if (playlists.getCount() == 0) {
+		SendError("There are no playlists in this Application. Please add a playlist.\n");
+		return;
+	}
+	if (audioLibrary->getAudioCount() == 0) {
+		SendError("There are no audio files in this Application. Please add an Audio file.\n");
+		return;
+	}
+	displayAllPlaylists();
 
+	std::string playlistName;
+	std::shared_ptr<Playlist> playlist = askForPlaylist(playlistName);
+	if (playlist != nullptr) {
+		std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
+		std::string audioName;
+		std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
+		if (audio != nullptr) {
+			playlist->removeAudio(audio);
+			SendSuccess("'" + audioName + "' was removed from the playlist '" + playlistName + "'.\n\n");
+		}
+	}
 }
 
 void Menu::playAllAudioInPlaylist()
@@ -305,9 +337,9 @@ bool Menu::YesOrNo(std::string question) {
 	return confirmation;
 }
 
-std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName)
+std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName, std::shared_ptr<AudioList> audioList)
 {
-	if (audioLibrary->getAudioCount() == 0) {
+	if (audioList->getAudioCount() == 0) {
 		SendError("There are no audio files in this Application. Please add an Audio file.\n");
 		return nullptr;
 	}
@@ -315,7 +347,7 @@ std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName)
 	while (true) {
 		std::cout << "Please enter the Audio's Name: ";
 		std::cin >> audioName;
-		audio = audioLibrary->getAudioByName(audioName);
+		audio = audioList->getAudioByName(audioName);
 		if (audio != nullptr) {
 			break;
 		}
