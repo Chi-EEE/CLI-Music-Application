@@ -10,7 +10,7 @@ std::shared_ptr<Audio> AudioList::getAudioByName(std::string audioName)
 				return temp->data;
 			}
 			temp = temp->next;
-		} while (temp != nullptr && temp != audioList.getTail());
+		} while (temp != nullptr && temp != audioList.getHead());
 	}
 	return nullptr;
 }
@@ -33,7 +33,7 @@ void AudioList::playAllAudio()
 		{
 			temp->data->play();
 			temp = temp->next;
-		} while (temp != nullptr && temp != audioList.getTail());
+		} while (temp != nullptr && temp != audioList.getHead());
 	}
 }
 
@@ -55,7 +55,7 @@ std::string AudioList::getAllAudio()
 		do {
 			result += "||" + temp->data->getName();
 			temp = temp->next;
-		} while (temp != nullptr && temp != this->audioList.getTail());
+		} while (temp != nullptr && temp != this->audioList.getHead());
 		result += "||";
 	}
 	result += "\n\n";

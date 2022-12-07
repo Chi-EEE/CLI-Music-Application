@@ -20,14 +20,20 @@ private:
 template<class T>
 inline void CircularLinkedList<T>::insert(std::shared_ptr<T> data)
 {
-	std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data, this->tail, this->head));
-	if (this->tail != nullptr) {
-		this->tail->next = node;
-	}
-	if (this->head == nullptr) {
+	if (count == 0)
+	{
+		std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data));
+		this->tail = node;
 		this->head = node;
 	}
-	this->tail = node;
+	else {
+		std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data));
+		this->head->next = node;
+		this->tail->prev = node;
+		node->next = this->tail;
+		node->prev = this->head;
+		this->head = node;
+	}
 	this->count++;
 }
 
@@ -45,8 +51,8 @@ inline bool CircularLinkedList<T>::removeData(std::shared_ptr<T> data)
 				}
 				else
 				{
-					temp.get()->next.get()->prev = temp.get()->next;
-					temp.get()->prev.get()->next = temp.get()->prev;
+					temp->next->prev = temp->next;
+					temp->prev->next = temp->prev;
 				}
 				this->count--;
 				return true;

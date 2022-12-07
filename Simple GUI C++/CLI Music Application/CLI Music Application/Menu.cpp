@@ -194,7 +194,7 @@ void Menu::removeAudio() {
 			{
 				temp->data->removeAudio(audio);
 				temp = temp->next;
-			} while (temp != nullptr && temp != playlists.getTail());
+			} while (temp != nullptr && temp != playlists.getHead());
 		}
 		SendSuccess("Removed '" + audio->getName() + "' from the entire Application.\n\n");
 	}
