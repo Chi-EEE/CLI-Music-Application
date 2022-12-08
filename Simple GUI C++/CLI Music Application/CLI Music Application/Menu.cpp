@@ -404,7 +404,7 @@ void Menu::viewPlaylistMenu()
 							}
 						}
 					}
-					if (YesOrNo("Do you want finish editing audio files?\n 0 = No\n 1 = Yes\n> ")) {
+					if (YesOrNo("Do you want finish editing the playlists?\n 0 = No\n 1 = Yes\n> ")) {
 						break;
 					}
 				}

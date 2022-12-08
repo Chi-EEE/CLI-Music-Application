@@ -25,6 +25,8 @@ inline void CircularLinkedList<T>::insert(std::shared_ptr<T> data)
 		std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data));
 		this->tail = node;
 		this->head = node;
+		node->next = node;
+		node->prev = node;
 	}
 	else {
 		std::shared_ptr<DoubleLinkedNode<T>>node(new DoubleLinkedNode<T>(data));
