@@ -31,12 +31,12 @@ void Menu::run() {
 		while (true) // Loop to check if user has inputted correct data type
 		{
 			// Starting text
-			std::cout << "CLI Music Application by Chi\n\t1) Add Audio\n\t2) Remove Audio\n\t3) Play Audio\n\t4) Create Artist\n\t5) Create Playlist\n\t6) Add Audio to Playlist\n\t7) Remove Audio from Playlist\n\t8) Play all Audio from Playlist\n\t9) Generate 3-5 Audio files\n\n> ";
+			std::cout << "CLI Music Application by Chi\n 1) Audio Menu\n> ";
 			std::cin >> selection;
 			if (!std::cin.fail()) {
 				break;
 			}
-			SendError("Error: Numbers only.\n\n");
+			SendError("Error: Numbers only.\n");
 			std::cin.clear();
 			std::cin.ignore(256, '\n');
 		}
@@ -44,35 +44,82 @@ void Menu::run() {
 		switch (selection) // Menu system
 		{
 		case 1:
-			addAudio();
-			break;
-		case 2:
-			removeAudio();
-			break;
-		case 3:
-			playAudio();
-			break;
-		case 4:
-			createArtist();
-			break;
-		case 5:
-			createPlaylist();
-			break;
-		case 6:
-			addAudioToPlaylist();
-			break;
-		case 7:
-			removeAudioFromPlaylist();
-			break;
-		case 8:
-			playAllAudioInPlaylist();
-			break;
-		case 9:
-			generateAudioFiles();
+			viewAudioMenu();
 			break;
 		default:
-			SendError("Invalid Selection\n\n");
+			SendError("Invalid Selection\n");
 			break;
+		}
+	}
+}
+
+/// <summary>
+/// 
+/// </summary>
+void Menu::viewAudioMenu()
+{
+	while (true) // Loop to check if user has inputted correct data type
+	{
+		int menuSelection;
+		while (true) {
+			std::cout << "=Audio Menu=\n1) Create Audio\n2) View Other Options\n3) Generate 3-5 Audio Files\n4) Exit\n> ";
+			std::cin >> menuSelection;
+			switch (menuSelection) {
+			case 1:
+			{
+				addAudio();
+				break;
+			}
+			case 2:
+			{
+				while (true) {
+					displayAllAudio();
+					std::string audioName;
+					std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
+					if (audio != nullptr) {
+						while (true) {
+							int selection;
+							std::cout << audioName << ":\n1) View Audio Details\n2) Update Audio\n3) Remove Audio\n4) Play Audio\n> ";
+							std::cin >> selection;
+							switch (selection) // Menu system
+							{
+							case 1:
+								viewAudioDetails(audioName, audio);
+								break;
+							case 2:
+								updateAudio(audioName, audio);
+								break;
+							case 3:
+								removeAudio(audioName, audio);
+								break;
+							case 4:
+								playAudio(audioName, audio);
+								break;
+							default:
+								SendError("Invalid Selection\n");
+								break;
+							}
+							if (YesOrNo("Do you want to finish editing '" + audioName + "'?\n\t0 = No\n\t1 = Yes\n> ")) {
+								return;
+							}
+						}
+					}
+					if (YesOrNo("Do you want finish editing audio files?\n\t0 = No\n\t1 = Yes\n> ")) {
+						break;
+					}
+				}
+				break;
+			}
+			case 3:
+			{
+				generateAudioFiles();
+				break;
+			}
+			case 4:
+			{
+				return;
+			}
+			}
 		}
 	}
 }
@@ -87,9 +134,8 @@ void Menu::generateAudioFiles()
 		int randomDuration = 1 + rand() % 30;
 		audioLibrary->addAudio(std::make_shared<Audio>(randomName, randomDescription, randomDuration));
 	}
-	SendSuccess(std::to_string(amountOfSets) + " Audio Files have been generated.\n\n");
+	SendSuccess(std::to_string(amountOfSets) + " Audio Files have been generated.\n");
 }
-
 
 void Menu::addAudio() {
 	std::string audioName;
@@ -140,25 +186,103 @@ void Menu::addAudio() {
 	}
 	std::cout << "\n";
 	if (confirmAddArtist) {
-		if (this->artists.size() == 0) {
-			SendError("There are no artists available.");
-			if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
-				auto artist = createArtist();
-				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
-				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n\n");
+		if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
+			auto artist = createArtist();
+			this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
+			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n");
+		}
+		else if (this->artists.size() > 0) {
+			std::cout << "Artists:\n";
+			for (int i = 0; i < artists.size(); i++) {
+				std::cout << '[' << i << "] '" << artists[i]->getName() << "'\n";
 			}
-			else {
-				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
-				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n\n");
-			}
+			int artistIndex;
+			do {
+				std::cout << "Please enter the index of the artist you want to add to this audio\n > ";
+				std::cin >> artistIndex;
+				if (!std::cin.fail() && artistIndex >= 1 && artistIndex <= artists.size()) {
+					break;
+				}
+				SendError("\nError: Please enter a number between 1 and " + std::to_string(artists.size()) + "\n");
+				std::cin.clear();
+				std::cin.ignore(256, '\n');
+			} while (true);
+			this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
+			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n");
 		}
 		else {
+			SendError("There are no artists available.\n");
+			this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n");
+		}
+	}
+	else {
+		this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+		SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n");
+	}
+}
+
+
+void Menu::viewAudioDetails(std::string audioName, std::shared_ptr<Audio> audio) {
+	auto artist = audio->getArtist();
+	if (artist != nullptr) {
+		std::cout << "Audio: " << audioName << "\n\tAudio Description: " << audio->getDescription() << "\n\tArtist: " << audio->getArtist() << "\n\tDuration: " << audio->getDuration() << "\n";
+	}
+	else {
+		std::cout << "Audio: " << audioName << "\n\tAudio Description: " << audio->getDescription() << "\n\tDuration: " << audio->getDuration() << "\n";
+	}
+}
+
+void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
+{
+	while (true) {
+		int selection;
+		std::cout << "Which property of the Audio do you want to edit?\n\t1) Name\n\t2) Description\n\t3) Artist\n\t4) Duration\n5) Exit\n> ";
+		std::cin >> selection;
+		switch (selection) {
+		case 1:
+		{
+			std::string newAudioName;
+			while (true) {
+				std::cout << "Please enter the Audio's new Name:\n> ";
+				std::cin >> newAudioName;
+				if (audioLibrary->getAudioByName(newAudioName) == nullptr)
+				{
+					if (!continueOperation()) {
+						break;
+					}
+					audio->setName(newAudioName);
+					SendSuccess(audioName + "'s new Name is: " + newAudioName + ".\n");
+					break;
+				}
+				SendError("There is already an Audio file with the name '" + newAudioName + "'!\nIf you wish to update the Audio, please remove and re-add it.");
+				if (!continueOperation()) {
+					break;
+				}
+			}
+			break;
+		}
+		case 2:
+		{
+			std::string newAudioDescription;
+			std::cout << "Please enter the Audio's Description: ";
+			std::cin >> newAudioDescription;
+			if (continueOperation()) {
+				audio->setDescription(newAudioDescription);
+				SendSuccess(audioName + "'s new Description is: " + newAudioDescription + ".\n");
+			}
+			break;
+		}
+		case 3:
+		{
 			if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
 				auto artist = createArtist();
-				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
-				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n\n");
+				if (continueOperation()) {
+					audio->setArtist(artist);
+					SendSuccess(audioName + "'s new Artist is: " + artist->getName() + ".\n");
+				}
 			}
-			else {
+			else if (this->artists.size() > 0) {
 				std::cout << "Artists:\n";
 				for (int i = 0; i < artists.size(); i++) {
 					std::cout << '[' << i << "] '" << artists[i]->getName() << "'\n";
@@ -170,28 +294,51 @@ void Menu::addAudio() {
 					if (!std::cin.fail() && artistIndex >= 1 && artistIndex <= artists.size()) {
 						break;
 					}
-					SendError("\nError: Please enter a number between 1 and " + std::to_string(artists.size()) + "\n\n");
+					SendError("\nError: Please enter a number between 1 and " + std::to_string(artists.size()) + "\n");
 					std::cin.clear();
 					std::cin.ignore(256, '\n');
 				} while (true);
-				this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
-				SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n\n");
+				if (!continueOperation()) {
+					break;
+				}
+				audio->setArtist(artists[artistIndex]);
+				SendSuccess(audioName + "'s new Artist is: " + artists[artistIndex]->getName() + ".\n");
 			}
+			else {
+				SendError("There are no artists available. Unable to edit the audio's artist.\n");
+			}
+			break;
 		}
-	}
-	else {
-		this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
-		SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n\n");
+		case 4:
+		{
+			float newAudioDuration;
+			while (true) {
+				std::cout << "Please enter the Audio's new Duration: ";
+				std::cin >> newAudioDuration;
+				if (!std::cin.fail()) {
+					break;
+				}
+				SendError("Error: Numbers only.\n");
+				std::cin.clear();
+				std::cin.ignore(256, '\n');
+			}
+			if (!continueOperation()) {
+				break;
+			}
+			audio->setDuration(newAudioDuration);
+			break;
+		}
+		case 5:
+		{
+			return;
+		}
+		}
 	}
 }
 
-void Menu::removeAudio() {
-	displayAllAudio();
-
-	std::string audioName;
-	std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
-	if (audio == nullptr) {
-		return; // EXIT FUNCTION
+void Menu::removeAudio(std::string audioName, std::shared_ptr<Audio> audio) {
+	if (!continueOperation()) {
+		return;
 	}
 	if (audioLibrary->removeAudio(audio)) {
 		if (playlists.getCount() > 0) {
@@ -202,20 +349,20 @@ void Menu::removeAudio() {
 				temp = temp->next;
 			} while (temp != nullptr && temp != playlists.getHead());
 		}
-		SendSuccess("Removed '" + audio->getName() + "' from the entire Application.\n\n");
+		SendSuccess("Removed '" + audio->getName() + "' from the entire Application.\n");
 	}
 	else {
-		SendError("Unable to find Audio with the name '" + audioName + "'.\n\n");
+		SendError("Unable to find Audio with the name '" + audioName + "'.\n");
 	}
 }
 
-void Menu::playAudio() {
-	displayAllAudio();
-	std::string audioName;
-	std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
-	if (audio != nullptr) {
-		audio->play();
-	}
+void Menu::playAudio(std::string audioName, std::shared_ptr<Audio> audio) {
+	audio->play();
+}
+
+void Menu::viewPlaylistMenu()
+{
+
 }
 
 std::shared_ptr<Artist> Menu::createArtist() {
@@ -225,7 +372,7 @@ std::shared_ptr<Artist> Menu::createArtist() {
 	std::cin >> artistName;
 	auto artist = std::make_shared<Artist>(artistName);
 	this->artists.push_back(artist);
-	SendSuccess("Created Artist: " + artistName + ".\n\n");
+	SendSuccess("Created Artist: " + artistName + ".\n");
 	return artist;
 }
 
@@ -234,7 +381,7 @@ void Menu::createPlaylist() {
 	std::cout << "Please enter the Playlist's Name: ";
 	std::cin >> playlistName;
 	playlists.insert(std::make_shared<Playlist>(playlistName));
-	SendSuccess("Created playlist '" + playlistName + "'.\n\n");
+	SendSuccess("Created playlist '" + playlistName + "'.\n");
 }
 
 void Menu::addAudioToPlaylist() {
@@ -256,12 +403,12 @@ void Menu::addAudioToPlaylist() {
 		std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
 		if (audio != nullptr) {
 			playlist->addAudio(audio);
-			SendSuccess("'" + audioName + "' was added to the playlist '" + playlistName + "'.\n\n");
+			SendSuccess("'" + audioName + "' was added to the playlist '" + playlistName + "'.\n");
 		}
 	}
 }
 
-void Menu::removeAudioFromPlaylist() 
+void Menu::removeAudioFromPlaylist()
 {
 	if (playlists.getCount() == 0) {
 		SendError("There are no playlists in this Application. Please add a playlist.\n");
@@ -281,7 +428,7 @@ void Menu::removeAudioFromPlaylist()
 		std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
 		if (audio != nullptr) {
 			playlist->removeAudio(audio);
-			SendSuccess("'" + audioName + "' was removed from the playlist '" + playlistName + "'.\n\n");
+			SendSuccess("'" + audioName + "' was removed from the playlist '" + playlistName + "'.\n");
 		}
 	}
 }
@@ -304,7 +451,7 @@ void Menu::playAllAudioInPlaylist()
 
 void Menu::playAllAudioInProgram()
 {
-	std::cout << "Now playing all the audio files in this application.\n\n";
+	std::cout << "Now playing all the audio files in this application.\n";
 	audioLibrary->playAllAudio();
 }
 
@@ -400,7 +547,7 @@ void Menu::displayAllPlaylists() {
 		} while (temp != nullptr && temp != this->playlists.getTail());
 		result += "||";
 	}
-	result += "\n\n";
+	result += "\n";
 	std::cout << result;
 }
 

@@ -12,10 +12,14 @@ class Menu
 {
 public:
 	void run();
+	void viewAudioMenu(); 
 	void generateAudioFiles();
 	void addAudio();
-	void removeAudio();
-	void playAudio();
+	void viewAudioDetails(std::string audioName, std::shared_ptr<Audio> audio);
+	void updateAudio(std::string audioName, std::shared_ptr<Audio> audio); 
+	void removeAudio(std::string audioName, std::shared_ptr<Audio> audio);
+	void playAudio(std::string audioName, std::shared_ptr<Audio> audio);
+	void viewPlaylistMenu(); 
 	std::shared_ptr<Artist> createArtist();
 	void createPlaylist();
 	void addAudioToPlaylist();

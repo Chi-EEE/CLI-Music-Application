@@ -23,6 +23,10 @@ public:
 	void play();
 
 	void setName(std::string name) { this->name = name; }
+	void setDescription(std::string description) { this->description = description; }
+	void setArtist(std::shared_ptr<Artist>) { this->artist = artist; }
+	void setDuration(float duration) { this->duration = duration; }
+
 	std::string getName() { return this->name; }
 	std::string getDescription() { return this->description; }
 	std::shared_ptr<Artist> getArtist() { return this->artist; }
