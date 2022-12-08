@@ -13,16 +13,20 @@ class Menu
 public:
 	void run();
 	void viewAudioMenu(); 
-	void generateAudioFiles();
-	void addAudio();
+	void createAudio();
 	void viewAudioDetails(std::string audioName, std::shared_ptr<Audio> audio);
 	void updateAudio(std::string audioName, std::shared_ptr<Audio> audio); 
 	void removeAudio(std::string audioName, std::shared_ptr<Audio> audio);
 	void playAudio(std::string audioName, std::shared_ptr<Audio> audio);
-	void viewPlaylistMenu(); 
-	std::shared_ptr<Artist> createArtist();
+	void viewPlaylistMenu();
 	void createPlaylist();
-	void addAudioToPlaylist();
+	void viewPlaylist(std::shared_ptr<Playlist> playlist);
+	void addAudioToPlaylist(std::shared_ptr<Playlist> playlist);
+	void removeAudioFromPlaylist(std::shared_ptr<Playlist> playlist);
+	void removePlaylist(std::shared_ptr<Playlist> playlist);
+	void viewArtistMenu();
+	std::shared_ptr<Artist> createArtist();
+	void removeArtist();
 	void removeAudioFromPlaylist();
 	void playAllAudioInPlaylist();
 	void playAllAudioInProgram();
@@ -40,6 +44,10 @@ private:
 	std::shared_ptr<Playlist> askForPlaylist(std::string& playlistName);
 	void displayAllAudio();
 	void displayAllPlaylists();
+	void displayAllArtists();
+	void generateAudioFiles();
+	void generatePlaylist();
+	void generateArtists();
 	void SendSuccess(std::string successMessage);
 	void SendError(std::string errorMessage);
 	void SendError(std::string errorMessage, std::string extraMessage);

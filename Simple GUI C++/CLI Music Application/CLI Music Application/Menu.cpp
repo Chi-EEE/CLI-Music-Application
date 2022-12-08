@@ -1,4 +1,4 @@
-#include "Menu.h"
+﻿#include "Menu.h"
 
 /// <summary>
 /// Generate random strings | Credits: https://stackoverflow.com/a/440240
@@ -22,6 +22,7 @@ std::string random_string(size_t length)
 }
 
 void Menu::run() {
+	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	audioLibrary = std::make_shared<AudioLibrary>();
 
@@ -31,7 +32,7 @@ void Menu::run() {
 		while (true) // Loop to check if user has inputted correct data type
 		{
 			// Starting text
-			std::cout << "CLI Music Application by Chi\n 1) Audio Menu\n> ";
+			std::cout << "CLI Music Application by Chi\n 1) Audio Menu\n 2) Playlist Menu\n 3) Artist Menu\n> ";
 			std::cin >> selection;
 			if (!std::cin.fail()) {
 				break;
@@ -45,6 +46,12 @@ void Menu::run() {
 		{
 		case 1:
 			viewAudioMenu();
+			break;
+		case 2:
+			viewPlaylistMenu();
+			break;
+		case 3:
+			viewArtistMenu();
 			break;
 		default:
 			SendError("Invalid Selection\n");
@@ -67,7 +74,7 @@ void Menu::viewAudioMenu()
 			switch (menuSelection) {
 			case 1:
 			{
-				addAudio();
+				createAudio();
 				break;
 			}
 			case 2:
@@ -99,12 +106,12 @@ void Menu::viewAudioMenu()
 								SendError("Invalid Selection\n");
 								break;
 							}
-							if (YesOrNo("Do you want to finish editing '" + audioName + "'?\n\t0 = No\n\t1 = Yes\n> ")) {
+							if (YesOrNo("Do you want to finish editing '" + audioName + "'?\n 0 = No\n 1 = Yes\n> ")) {
 								return;
 							}
 						}
 					}
-					if (YesOrNo("Do you want finish editing audio files?\n\t0 = No\n\t1 = Yes\n> ")) {
+					if (YesOrNo("Do you want finish editing audio files?\n 0 = No\n 1 = Yes\n> ")) {
 						break;
 					}
 				}
@@ -124,20 +131,7 @@ void Menu::viewAudioMenu()
 	}
 }
 
-void Menu::generateAudioFiles()
-{
-	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
-	int amountOfSets = 3 + rand() % 3;
-	for (int i = 0; i < amountOfSets; i++) { // Generate 3 - 5 sets
-		std::string randomName = random_string(5);	// Random 5 characters
-		std::string randomDescription = random_string(5);
-		int randomDuration = 1 + rand() % 30;
-		audioLibrary->addAudio(std::make_shared<Audio>(randomName, randomDescription, randomDuration));
-	}
-	SendSuccess(std::to_string(amountOfSets) + " Audio Files have been generated.\n");
-}
-
-void Menu::addAudio() {
+void Menu::createAudio() {
 	std::string audioName;
 	std::string audioDescription;
 	int audioDuration = 1;
@@ -175,7 +169,7 @@ void Menu::addAudio() {
 
 	bool confirmAddArtist = false;
 	while (true) {
-		std::cout << "\nWould you like to add an Artist to this Audio:\n\t0 = No\n\t1 = Yes\n> ";
+		std::cout << "\nWould you like to add an Artist to this Audio:\n 0 = No\n 1 = Yes\n> ";
 		std::cin >> confirmAddArtist;
 		if (!std::cin.fail()) {
 			break;
@@ -186,9 +180,9 @@ void Menu::addAudio() {
 	}
 	std::cout << "\n";
 	if (confirmAddArtist) {
-		if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
+		if (YesOrNo("\nWould you like to create an artist?:\n 0 = No\n 1 = Yes\n> ")) {
 			auto artist = createArtist();
-			this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
+			this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
 			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n");
 		}
 		else if (this->artists.size() > 0) {
@@ -207,29 +201,28 @@ void Menu::addAudio() {
 				std::cin.clear();
 				std::cin.ignore(256, '\n');
 			} while (true);
-			this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
+			this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
 			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n");
 		}
 		else {
 			SendError("There are no artists available.\n");
-			this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+			this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
 			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n");
 		}
 	}
 	else {
-		this->audioLibrary->addAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+		this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
 		SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n");
 	}
 }
 
-
 void Menu::viewAudioDetails(std::string audioName, std::shared_ptr<Audio> audio) {
 	auto artist = audio->getArtist();
 	if (artist != nullptr) {
-		std::cout << "Audio: " << audioName << "\n\tAudio Description: " << audio->getDescription() << "\n\tArtist: " << audio->getArtist() << "\n\tDuration: " << audio->getDuration() << "\n";
+		std::cout << "Audio: " << audioName << "\n Audio Description: " << audio->getDescription() << "\n Artist: " << audio->getArtist() << "\n Duration: " << audio->getDuration() << "\n";
 	}
 	else {
-		std::cout << "Audio: " << audioName << "\n\tAudio Description: " << audio->getDescription() << "\n\tDuration: " << audio->getDuration() << "\n";
+		std::cout << "Audio: " << audioName << "\n Audio Description: " << audio->getDescription() << "\n Duration: " << audio->getDuration() << "\n";
 	}
 }
 
@@ -237,7 +230,7 @@ void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
 {
 	while (true) {
 		int selection;
-		std::cout << "Which property of the Audio do you want to edit?\n\t1) Name\n\t2) Description\n\t3) Artist\n\t4) Duration\n5) Exit\n> ";
+		std::cout << "Which property of the Audio do you want to edit?\n 1) Name\n 2) Description\n 3) Artist\n 4) Duration\n 5) Exit\n> ";
 		std::cin >> selection;
 		switch (selection) {
 		case 1:
@@ -275,7 +268,7 @@ void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
 		}
 		case 3:
 		{
-			if (YesOrNo("\nWould you like to create an artist?:\n\t0 = No\n\t1 = Yes\n> ")) {
+			if (YesOrNo("\nWould you like to create an artist?:\n 0 = No\n 1 = Yes\n> ")) {
 				auto artist = createArtist();
 				if (continueOperation()) {
 					audio->setArtist(artist);
@@ -362,7 +355,151 @@ void Menu::playAudio(std::string audioName, std::shared_ptr<Audio> audio) {
 
 void Menu::viewPlaylistMenu()
 {
+	while (true) // Loop to check if user has inputted correct data type
+	{
+		int menuSelection;
+		while (true) {
+			std::cout << "=Playlist Menu=\n1) Create Playlist\n2) View Other Options\n3) Generate 3-5 Playlists\n4) Exit\n> ";
+			std::cin >> menuSelection;
+			switch (menuSelection) {
+			case 1:
+			{
+				createPlaylist();
+				break;
+			}
+			case 2:
+			{
+				while (true) {
+					displayAllPlaylists();
+					std::string playlistName;
+					std::shared_ptr<Playlist> playlist = askForPlaylist(playlistName);
+					if (playlist != nullptr) {
+						while (true) {
+							int selection;
+							std::cout << playlistName << ":\n1) View Playlist Audios\n2) Add Audio to Playlist\n3) Remove Audio from Playlist\n4) Remove Playlist\n5) Play all Audios in Playlist\n> ";
+							std::cin >> selection;
+							switch (selection) // Menu system
+							{
+							case 1:
+								viewPlaylist(playlist);
+								break;
+							case 2:
+								addAudioToPlaylist(playlist);
+								break;
+							case 3:
+								removeAudioFromPlaylist(playlist);
+								break;
+							case 4:
+								removePlaylist(playlist);
+								break;
+							case 5:
+								playlist->playAllAudio();
+								break;
+							default:
+								SendError("Invalid Selection\n");
+								break;
+							}
+							if (YesOrNo("Do you want to finish editing '" + playlistName + "'?\n 0 = No\n 1 = Yes\n> ")) {
+								return;
+							}
+						}
+					}
+					if (YesOrNo("Do you want finish editing audio files?\n 0 = No\n 1 = Yes\n> ")) {
+						break;
+					}
+				}
+				break;
+			}
+			case 3:
+			{
+				generatePlaylist();
+				break;
+			}
+			case 4:
+			{
+				return;
+			}
+			}
+		}
+	}
+}
 
+void Menu::viewArtistMenu()
+{
+	while (true) // Loop to check if user has inputted correct data type
+	{
+		int menuSelection;
+		while (true) {
+			std::cout << "=Artist Menu=\n1) Create Artist\n2) Delete Artist\n3) Generate 3-5 Artist\n4) Exit\n> ";
+			std::cin >> menuSelection;
+			switch (menuSelection) {
+			case 1:
+			{
+				createArtist();
+				break;
+			}
+			case 2:
+			{
+				removeArtist();
+				break;
+			}
+			case 3:
+			{
+				generateArtists();
+				break;
+			}
+			case 4:
+			{
+				return;
+			}
+			}
+		}
+	}
+}
+
+void Menu::viewPlaylist(std::shared_ptr<Playlist> playlist) {
+	std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
+	std::string audioName;
+	std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
+	if (audio != nullptr) {
+		playlist->removeAudio(audio);
+		SendSuccess("'" + audioName + "' was removed from the playlist '" + playlist->getName() + "'.\n");
+	}
+}
+
+void Menu::addAudioToPlaylist(std::shared_ptr<Playlist> playlist) {
+	if (audioLibrary->getAudioCount() == 0) {
+		SendError("There are no audio files in this Application. Please add an Audio file.\n");
+		return;
+	}
+	if (playlist != nullptr) {
+		displayAllAudio();
+		std::string audioName;
+		std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
+		if (audio != nullptr) {
+			playlist->createAudio(audio);
+			SendSuccess("'" + audioName + "' was added to the playlist '" + playlist->getName() + "'.\n");
+		}
+	}
+}
+
+void Menu::removeAudioFromPlaylist(std::shared_ptr<Playlist> playlist) {
+	std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
+	std::string audioName;
+	std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
+	if (audio != nullptr) {
+		playlist->removeAudio(audio);
+		SendSuccess("'" + audioName + "' was removed from the playlist '" + playlist->getName() + "'.\n");
+	}
+}
+
+void Menu::removePlaylist(std::shared_ptr<Playlist> playlist) {
+	if (playlists.removeData(playlist)) {
+		SendSuccess("Removed Playlist '" + playlist->getName() + "' from the Application.\n");
+	}
+	else {
+		SendError("Unable to Remove Playlist '" + playlist->getName() + "' from the Application.\n");
+	}
 }
 
 std::shared_ptr<Artist> Menu::createArtist() {
@@ -372,8 +509,28 @@ std::shared_ptr<Artist> Menu::createArtist() {
 	std::cin >> artistName;
 	auto artist = std::make_shared<Artist>(artistName);
 	this->artists.push_back(artist);
-	SendSuccess("Created Artist: " + artistName + ".\n");
+	SendSuccess("Created Artist: " + artistName + ".\n\n");
 	return artist;
+}
+
+void Menu::removeArtist() {
+	displayAllArtists();
+	while (true) {
+		std::string artistName;
+		std::cout << "Please enter the Artist's Name you want to remove: ";
+		std::cin >> artistName;
+		for (int i = 0; i < artists.size(); i++) {
+			if (artists[i]->getName() == artistName) {
+				SendSuccess("Removed Artist: " + artistName + ".\n\n");
+				artists.erase(artists.begin() + i);
+				return;
+			}
+		}
+		SendError("Unable to find Artist: " + artistName + ".\n\n");
+		if (!continueOperation()) {
+			return;
+		}
+	}
 }
 
 void Menu::createPlaylist() {
@@ -381,56 +538,7 @@ void Menu::createPlaylist() {
 	std::cout << "Please enter the Playlist's Name: ";
 	std::cin >> playlistName;
 	playlists.insert(std::make_shared<Playlist>(playlistName));
-	SendSuccess("Created playlist '" + playlistName + "'.\n");
-}
-
-void Menu::addAudioToPlaylist() {
-	if (playlists.getCount() == 0) {
-		SendError("There are no playlists in this Application. Please add a playlist.\n");
-		return;
-	}
-	if (audioLibrary->getAudioCount() == 0) {
-		SendError("There are no audio files in this Application. Please add an Audio file.\n");
-		return;
-	}
-	displayAllPlaylists();
-
-	std::string playlistName;
-	std::shared_ptr<Playlist> playlist = askForPlaylist(playlistName);
-	if (playlist != nullptr) {
-		displayAllAudio();
-		std::string audioName;
-		std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
-		if (audio != nullptr) {
-			playlist->addAudio(audio);
-			SendSuccess("'" + audioName + "' was added to the playlist '" + playlistName + "'.\n");
-		}
-	}
-}
-
-void Menu::removeAudioFromPlaylist()
-{
-	if (playlists.getCount() == 0) {
-		SendError("There are no playlists in this Application. Please add a playlist.\n");
-		return;
-	}
-	if (audioLibrary->getAudioCount() == 0) {
-		SendError("There are no audio files in this Application. Please add an Audio file.\n");
-		return;
-	}
-	displayAllPlaylists();
-
-	std::string playlistName;
-	std::shared_ptr<Playlist> playlist = askForPlaylist(playlistName);
-	if (playlist != nullptr) {
-		std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
-		std::string audioName;
-		std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
-		if (audio != nullptr) {
-			playlist->removeAudio(audio);
-			SendSuccess("'" + audioName + "' was removed from the playlist '" + playlistName + "'.\n");
-		}
-	}
+	SendSuccess("Created playlist '" + playlistName + "'.\n\n");
 }
 
 void Menu::playAllAudioInPlaylist()
@@ -460,7 +568,7 @@ void Menu::playAllAudioInProgram()
 /// </summary>
 /// <returns>True = continue / False = stop</returns>
 bool Menu::continueOperation() {
-	return YesOrNo("\nWould you like to continue:\n\t0 = No\n\t1 = Yes\n> ");
+	return YesOrNo("\nWould you like to continue:\n 0 = No\n 1 = Yes\n> ");
 }
 
 bool Menu::YesOrNo(std::string question) {
@@ -549,6 +657,48 @@ void Menu::displayAllPlaylists() {
 	}
 	result += "\n";
 	std::cout << result;
+}
+
+void Menu::displayAllArtists() {
+	std::cout << "All Artists in the Program: ";
+	std::string result = "";
+	for (int i = 0; i < artists.size(); i++) {
+		result += "||" + artists[i]->getName();
+	}
+	result += "||\n";
+	std::cout << result;
+}
+
+void Menu::generateAudioFiles()
+{
+	int amountOfAudio = 3 + rand() % 3;
+	for (int i = 0; i < amountOfAudio; i++) {
+		std::string randomName = random_string(5);	// Random 5 characters
+		std::string randomDescription = random_string(5);
+		int randomDuration = 1 + rand() % 30;
+		audioLibrary->createAudio(std::make_shared<Audio>(randomName, randomDescription, randomDuration));
+	}
+	SendSuccess(std::to_string(amountOfAudio) + " Audio Files have been generated.\n");
+}
+
+void Menu::generatePlaylist()
+{
+	int amountOfPlaylist = 3 + rand() % 3;
+	for (int i = 0; i < amountOfPlaylist; i++) {
+		std::string randomName = random_string(5);	// Random 5 characters
+		playlists.insert(std::make_shared<Playlist>(randomName));
+	}
+	SendSuccess(std::to_string(amountOfPlaylist) + " Playlists have been generated.\n");
+}
+
+void Menu::generateArtists()
+{
+	int amountOfArtist = 3 + rand() % 3;
+	for (int i = 0; i < amountOfArtist; i++) {
+		std::string randomName = random_string(5);	// Random 5 characters
+		artists.push_back(std::make_shared<Artist>(randomName));
+	}
+	SendSuccess(std::to_string(amountOfArtist) + " Artists have been generated.\n");
 }
 
 /// <summary>

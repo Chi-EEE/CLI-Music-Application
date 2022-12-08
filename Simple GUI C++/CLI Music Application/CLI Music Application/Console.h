@@ -45,24 +45,6 @@ public:
 		system("clear");
 #endif
 	}
-	/// <summary>
-	/// Waits and outputs the key code pressed
-	/// Source: https://stackoverflow.com/a/55918450
-	/// </summary>
-	/// <param name="keyCode">The code of the Key pressed</param>
-	/// <returns>Whether it is a function key or an arrow key</returns>
-	bool getKey(int& keyCode)
-	{
-		keyCode = _getch();  //Will return '0'
-		if (keyCode != 0x00 && keyCode != 0xE0) {
-			return false;
-		}
-		keyCode = _getch();
-		return true;
-	}
-	static Console* getInstance() {
-		return Console::instance;
-	}
 private:
 	static Console* instance;
 	Console() {

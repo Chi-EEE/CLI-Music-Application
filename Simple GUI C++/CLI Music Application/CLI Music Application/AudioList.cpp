@@ -15,7 +15,7 @@ std::shared_ptr<Audio> AudioList::getAudioByName(std::string audioName)
 	return nullptr;
 }
 
-void AudioList::addAudio(std::shared_ptr<Audio> audio)
+void AudioList::createAudio(std::shared_ptr<Audio> audio)
 {
 	this->audioList.insert(audio);
 }
@@ -28,12 +28,23 @@ bool AudioList::removeAudio(std::shared_ptr<Audio> audio)
 void AudioList::playAllAudio()
 {
 	if (getAudioCount() > 0) {
+		bool continuePlaying = false;
 		auto temp = this->audioList.getHead();
 		do
 		{
 			temp->data->play();
 			temp = temp->next;
-		} while (temp != nullptr && temp != audioList.getHead());
+			while (true) {
+				std::cout << "Do you want to continue playing audio from this list?";
+				std::cin >> continuePlaying;
+				if (!std::cin.fail()) {
+					break;
+				}
+				std::cout << "\nError: 0 or 1";
+				std::cin.clear();
+				std::cin.ignore(256, '\n');
+			}
+		} while (continuePlaying);
 	}
 }
 
