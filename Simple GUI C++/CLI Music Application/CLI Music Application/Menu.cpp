@@ -69,7 +69,7 @@ void Menu::viewAudioMenu()
 	{
 		int menuSelection;
 		while (true) {
-			std::cout << "=Audio Menu=\n1) Create Audio\n2) View Other Options\n3) Generate 3-5 Audio Files\n4) Exit\n> ";
+			std::cout << "=Audio Menu=\n1) Create Audio\n2) Search and preview Audio\n3) Generate 3-5 Audio Files\n4) Exit\n> ";
 			std::cin >> menuSelection;
 			switch (menuSelection) {
 			case 1:
@@ -359,7 +359,7 @@ void Menu::viewPlaylistMenu()
 	{
 		int menuSelection;
 		while (true) {
-			std::cout << "=Playlist Menu=\n1) Create Playlist\n2) View Other Options\n3) Generate 3-5 Playlists\n4) Exit\n> ";
+			std::cout << "=Playlist Menu=\n1) Create Playlist\n2) Search and preview Playlist\n3) Generate 3-5 Playlists\n4) Exit\n> ";
 			std::cin >> menuSelection;
 			switch (menuSelection) {
 			case 1:
