@@ -1,4 +1,8 @@
-﻿#include "Menu.h"
+﻿/// <summary>
+/// Name: Chi Huu Huynh
+/// Date: 06/12/2022
+/// </summary>
+#include "Menu.h"
 
 /// <summary>
 /// Generate random strings | Credits: https://stackoverflow.com/a/440240

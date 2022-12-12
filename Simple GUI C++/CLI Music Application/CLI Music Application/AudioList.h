@@ -1,3 +1,7 @@
+/// <summary>
+/// Name: Chi Huu Huynh
+/// Date: 06/12/2022
+/// </summary>
 #pragma once
 #include "CircularLinkedList.h"
 #include "Audio.h"

@@ -1,3 +1,7 @@
+/// <summary>
+/// Name: Chi Huu Huynh
+/// Date: 06/12/2022
+/// </summary>
 #pragma once
 template <class T>
 class DoubleLinkedNode
