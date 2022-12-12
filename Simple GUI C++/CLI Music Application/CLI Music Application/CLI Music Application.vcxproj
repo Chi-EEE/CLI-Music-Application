@@ -130,7 +130,6 @@
     <ClCompile Include="Artist.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioLibrary.cpp" />
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="DoubleLinkedNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -143,7 +142,6 @@
     <ClInclude Include="AudioLibrary.h" />
     <ClInclude Include="CircularLinkedList.h" />
     <ClInclude Include="Colour.h" />
-    <ClInclude Include="Console.h" />
     <ClInclude Include="DoubleLinkedNode.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Playlist.h" />
