@@ -25,6 +25,9 @@ std::string random_string(size_t length)
 	return str;
 }
 
+/// <summary>
+/// The main loop of the application
+/// </summary>
 void Menu::run() {
 	std::srand(static_cast<unsigned>(time(nullptr)));		//Initalise random seed
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -65,7 +68,7 @@ void Menu::run() {
 }
 
 /// <summary>
-/// 
+/// The submenu for handling audio files
 /// </summary>
 void Menu::viewAudioMenu()
 {
@@ -95,7 +98,7 @@ void Menu::viewAudioMenu()
 							switch (selection) // Menu system
 							{
 							case 1:
-								viewAudioDetails(audioName, audio);
+								viewAudioDetails(audio);
 								break;
 							case 2:
 								updateAudio(audioName, audio);
@@ -135,6 +138,9 @@ void Menu::viewAudioMenu()
 	}
 }
 
+/// <summary>
+/// Asks the user to create an Audio instance with its name, description, duration and artist.
+/// </summary>
 void Menu::createAudio() {
 	std::string audioName;
 	std::string audioDescription;
@@ -220,16 +226,25 @@ void Menu::createAudio() {
 	}
 }
 
-void Menu::viewAudioDetails(std::string audioName, std::shared_ptr<Audio> audio) {
+/// <summary>
+/// Displays the inputted audio’s details
+/// </summary>
+/// <param name="audio">Audio to be printed</param>
+void Menu::viewAudioDetails(std::shared_ptr<Audio> audio) {
 	auto artist = audio->getArtist();
 	if (artist != nullptr) {
-		std::cout << "Audio: " << audioName << "\n Audio Description: " << audio->getDescription() << "\n Artist: " << audio->getArtist() << "\n Duration: " << audio->getDuration() << "\n";
+		std::cout << "Audio: " << audio->getName() << "\n Audio Description: " << audio->getDescription() << "\n Artist: " << audio->getArtist() << "\n Duration: " << audio->getDuration() << "\n";
 	}
 	else {
-		std::cout << "Audio: " << audioName << "\n Audio Description: " << audio->getDescription() << "\n Duration: " << audio->getDuration() << "\n";
+		std::cout << "Audio: " << audio->getName() << "\n Audio Description: " << audio->getDescription() << "\n Duration: " << audio->getDuration() << "\n";
 	}
 }
 
+/// <summary>
+/// Asks the user to decide which property to update in the inputted audio
+/// </summary>
+/// <param name="audioName">Audio name</param>
+/// <param name="audio">Audio to be changed</param>
 void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
 {
 	while (true) {
@@ -333,6 +348,11 @@ void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
 	}
 }
 
+/// <summary>
+/// Removes the inputted audio from the program
+/// </summary>
+/// <param name="audioName">Audio name</param>
+/// <param name="audio">Audio to be deleted</param>
 void Menu::removeAudio(std::string audioName, std::shared_ptr<Audio> audio) {
 	if (!continueOperation()) {
 		return;
@@ -353,10 +373,18 @@ void Menu::removeAudio(std::string audioName, std::shared_ptr<Audio> audio) {
 	}
 }
 
+/// <summary>
+/// Prints out that the inputted audio is playing
+/// </summary>
+/// <param name="audioName">Audio Name</param>
+/// <param name="audio">Audio to be played</param>
 void Menu::playAudio(std::string audioName, std::shared_ptr<Audio> audio) {
 	audio->play();
 }
 
+/// <summary>
+/// Sub menu for handling playlists
+/// </summary>
 void Menu::viewPlaylistMenu()
 {
 	while (true) // Loop to check if user has inputted correct data type
@@ -428,6 +456,9 @@ void Menu::viewPlaylistMenu()
 	}
 }
 
+/// <summary>
+/// Sub menu for handling Artist
+/// </summary>
 void Menu::viewArtistMenu()
 {
 	while (true) // Loop to check if user has inputted correct data type
@@ -461,16 +492,18 @@ void Menu::viewArtistMenu()
 	}
 }
 
+/// <summary>
+/// Lists all the Audio inside of the Playlist
+/// </summary>
+/// <param name="playlist"></param>
 void Menu::viewPlaylist(std::shared_ptr<Playlist> playlist) {
 	std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
-	std::string audioName;
-	std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
-	if (audio != nullptr) {
-		playlist->removeAudio(audio);
-		SendSuccess("'" + audioName + "' was removed from the playlist '" + playlist->getName() + "'.\n");
-	}
 }
 
+/// <summary>
+/// Asks the user which Audio to add to the Audio parameter
+/// </summary>
+/// <param name="playlist">Playlist to add the Audio into</param>
 void Menu::addAudioToPlaylist(std::shared_ptr<Playlist> playlist) {
 	if (audioLibrary->getAudioCount() == 0) {
 		SendError("There are no audio files in this Application. Please add an Audio file.\n");
@@ -481,14 +514,22 @@ void Menu::addAudioToPlaylist(std::shared_ptr<Playlist> playlist) {
 		std::string audioName;
 		std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
 		if (audio != nullptr) {
-			playlist->createAudio(audio);
-			SendSuccess("'" + audioName + "' was added to the playlist '" + playlist->getName() + "'.\n");
+			if (playlist->createAudio(audio)) {
+				SendSuccess("'" + audioName + "' was added to the playlist '" + playlist->getName() + "'.\n");
+			}
+			else {
+				SendError("Unable to add '" + audioName + "' to the playlist. '" + audioName + "' is already in the playlist.");
+			}
 		}
 	}
 }
 
+/// <summary>
+/// Asks the user which audio to remove from the inputted playlist
+/// </summary>
+/// <param name="playlist"></param>
 void Menu::removeAudioFromPlaylist(std::shared_ptr<Playlist> playlist) {
-	std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
+	viewPlaylist(playlist);
 	std::string audioName;
 	std::shared_ptr<Audio> audio = askForAudio(audioName, playlist);
 	if (audio != nullptr) {
@@ -497,6 +538,10 @@ void Menu::removeAudioFromPlaylist(std::shared_ptr<Playlist> playlist) {
 	}
 }
 
+/// <summary>
+/// Removes the inputted playlist from the program
+/// </summary>
+/// <param name="playlist"></param>
 void Menu::removePlaylist(std::shared_ptr<Playlist> playlist) {
 	if (playlists.removeData(playlist)) {
 		SendSuccess("Removed Playlist '" + playlist->getName() + "' from the Application.\n");
@@ -506,9 +551,12 @@ void Menu::removePlaylist(std::shared_ptr<Playlist> playlist) {
 	}
 }
 
+/// <summary>
+/// Asks the user to input a name to create an artist
+/// </summary>
+/// <returns></returns>
 std::shared_ptr<Artist> Menu::createArtist() {
 	std::string artistName;
-
 	std::cout << "Please enter the Artist's Name: ";
 	std::cin >> artistName;
 	auto artist = std::make_shared<Artist>(artistName);
@@ -517,6 +565,9 @@ std::shared_ptr<Artist> Menu::createArtist() {
 	return artist;
 }
 
+/// <summary>
+/// Removes the artist from the program
+/// </summary>
 void Menu::removeArtist() {
 	displayAllArtists();
 	while (true) {
@@ -537,6 +588,9 @@ void Menu::removeArtist() {
 	}
 }
 
+/// <summary>
+///  Asks the user to input a name to create a new playlist 
+/// </summary>
 void Menu::createPlaylist() {
 	std::string playlistName;
 	std::cout << "Please enter the Playlist's Name: ";
@@ -545,6 +599,9 @@ void Menu::createPlaylist() {
 	SendSuccess("Created playlist '" + playlistName + "'.\n\n");
 }
 
+/// <summary>
+/// Goes through all the audio in the playlist and plays them one at a time, asking if the user wants to continue
+/// </summary>
 void Menu::playAllAudioInPlaylist()
 {
 	if (playlists.getCount() == 0) {
@@ -561,6 +618,9 @@ void Menu::playAllAudioInPlaylist()
 	}
 }
 
+/// <summary>
+/// Goes through all the audio in the program and plays them one at a time, asking if the user wants to continue
+/// </summary>
 void Menu::playAllAudioInProgram()
 {
 	std::cout << "Now playing all the audio files in this application.\n";

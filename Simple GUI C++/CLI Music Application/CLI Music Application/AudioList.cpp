@@ -15,9 +15,13 @@ std::shared_ptr<Audio> AudioList::getAudioByName(std::string audioName)
 	return nullptr;
 }
 
-void AudioList::createAudio(std::shared_ptr<Audio> audio)
+bool AudioList::createAudio(std::shared_ptr<Audio> audio)
 {
-	this->audioList.insert(audio);
+	if (getAudioByName(audio->getName()) == nullptr) {
+		this->audioList.insert(audio);
+		return true;
+	}
+	return false;
 }
 
 bool AudioList::removeAudio(std::shared_ptr<Audio> audio)

@@ -10,7 +10,7 @@ class AudioList
 {
 public:
 	std::shared_ptr<Audio> getAudioByName(std::string audioName);
-	void createAudio(std::shared_ptr<Audio> audio);
+	bool createAudio(std::shared_ptr<Audio> audio);
 	bool removeAudio(std::shared_ptr<Audio> audio);
 	void playAllAudio();
 	bool removeAudioByName(std::string audioName);
