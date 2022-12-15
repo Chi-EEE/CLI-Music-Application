@@ -59,7 +59,7 @@ void AudioList::playAllAudio()
 			temp->data->play();
 			temp = temp->next;
 			while (true) {
-				std::cout << "Do you want to continue playing audio from this list?";
+				std::cout << "Do you want to continue playing audio from this list? [0 = No, 1 = Yes]";
 				std::cin >> continuePlaying;
 				if (!std::cin.fail()) {
 					break;

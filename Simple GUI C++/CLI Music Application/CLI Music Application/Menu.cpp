@@ -39,7 +39,7 @@ void Menu::run() {
 		while (true) // Loop to check if user has inputted correct data type
 		{
 			// Starting text
-			std::cout << "CLI Music Application by Chi\n 1) Audio Menu\n 2) Playlist Menu\n 3) Artist Menu\n> ";
+			std::cout << "CLI Music Application by Chi\n 1) Audio Menu\n 2) Playlist Menu\n 3) Artist Menu\n 4) Play all Audio in Program\n> ";
 			std::cin >> selection;
 			if (!std::cin.fail()) {
 				break;
@@ -59,6 +59,9 @@ void Menu::run() {
 			break;
 		case 3:
 			viewArtistMenu();
+			break;
+		case 4:
+			playAllAudioInProgram();
 			break;
 		default:
 			SendError("Invalid Selection\n");
@@ -113,7 +116,7 @@ void Menu::viewAudioMenu()
 								SendError("Invalid Selection\n");
 								break;
 							}
-							if (YesOrNo("Do you want to finish editing '" + audioName + "'?\n 0 = No\n 1 = Yes\n> ")) {
+							if (YesOrNo("Do you want to finish handling '" + audioName + "'?\n 0 = No\n 1 = Yes\n> ")) {
 								return;
 							}
 						}
@@ -200,7 +203,7 @@ void Menu::createAudio() {
 		else if (this->artists.size() > 0) {
 			std::cout << "Artists:\n";
 			for (int i = 0; i < artists.size(); i++) {
-				std::cout << '[' << i << "] '" << artists[i]->getName() << "'\n";
+				std::cout << '[' << i + 1 << "] '" << artists[i]->getName() << "'\n";
 			}
 			int artistIndex;
 			do {
@@ -214,7 +217,7 @@ void Menu::createAudio() {
 				std::cin.ignore(256, '\n');
 			} while (true);
 			this->audioLibrary->insertAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
-			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n");
+			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex - 1]->getName() + ".\n");
 		}
 		else {
 			SendError("There are no artists available.\n");
@@ -433,7 +436,7 @@ void Menu::viewPlaylistMenu()
 								SendError("Invalid Selection\n");
 								break;
 							}
-							if (YesOrNo("Do you want to finish editing '" + playlistName + "'?\n 0 = No\n 1 = Yes\n> ")) {
+							if (YesOrNo("Do you want to finish handling '" + playlistName + "'?\n 0 = No\n 1 = Yes\n> ")) {
 								return;
 							}
 						}
