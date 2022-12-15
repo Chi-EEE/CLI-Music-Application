@@ -238,7 +238,7 @@ void Menu::createAudio() {
 void Menu::viewAudioDetails(std::shared_ptr<Audio> audio) {
 	auto artist = audio->getArtist();
 	if (artist != nullptr) {
-		std::cout << "Audio: " << audio->getName() << "\n Audio Description: " << audio->getDescription() << "\n Artist: " << audio->getArtist() << "\n Duration: " << audio->getDuration() << "\n";
+		std::cout << "Audio: " << audio->getName() << "\n Audio Description: " << audio->getDescription() << "\n Artist: " << audio->getArtist()->getName() << "\n Duration: " << audio->getDuration() << "\n";
 	}
 	else {
 		std::cout << "Audio: " << audio->getName() << "\n Audio Description: " << audio->getDescription() << "\n Duration: " << audio->getDuration() << "\n";
