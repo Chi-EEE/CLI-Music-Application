@@ -192,7 +192,7 @@ void Menu::createAudio() {
 	if (confirmAddArtist) {
 		if (YesOrNo("\nWould you like to create an artist?:\n 0 = No\n 1 = Yes\n> ")) {
 			auto artist = createArtist();
-			this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
+			this->audioLibrary->insertAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artist));
 			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artist->getName() + ".\n");
 		}
 		else if (this->artists.size() > 0) {
@@ -211,17 +211,17 @@ void Menu::createAudio() {
 				std::cin.clear();
 				std::cin.ignore(256, '\n');
 			} while (true);
-			this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
+			this->audioLibrary->insertAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration, artists[artistIndex - 1]));
 			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + " | Artist: " + artists[artistIndex]->getName() + ".\n");
 		}
 		else {
 			SendError("There are no artists available.\n");
-			this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+			this->audioLibrary->insertAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
 			SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n");
 		}
 	}
 	else {
-		this->audioLibrary->createAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
+		this->audioLibrary->insertAudio(std::make_shared<Audio>(audioName, audioDescription, audioDuration));
 		SendSuccess("Created Audio: " + audioName + " | Description: " + audioDescription + " | Duration: " + std::to_string(audioDuration) + ".\n");
 	}
 }
@@ -501,7 +501,7 @@ void Menu::viewPlaylist(std::shared_ptr<Playlist> playlist) {
 }
 
 /// <summary>
-/// Asks the user which Audio to add to the Audio parameter
+/// Asks the user which Audio to insert into the playlist
 /// </summary>
 /// <param name="playlist">Playlist to add the Audio into</param>
 void Menu::addAudioToPlaylist(std::shared_ptr<Playlist> playlist) {
@@ -514,7 +514,7 @@ void Menu::addAudioToPlaylist(std::shared_ptr<Playlist> playlist) {
 		std::string audioName;
 		std::shared_ptr<Audio> audio = askForAudio(audioName, audioLibrary);
 		if (audio != nullptr) {
-			if (playlist->createAudio(audio)) {
+			if (playlist->insertAudio(audio)) {
 				SendSuccess("'" + audioName + "' was added to the playlist '" + playlist->getName() + "'.\n");
 			}
 			else {
@@ -740,7 +740,7 @@ void Menu::generateAudioFiles()
 		std::string randomName = random_string(5);	// Random 5 characters
 		std::string randomDescription = random_string(5);
 		int randomDuration = 1 + rand() % 30;
-		audioLibrary->createAudio(std::make_shared<Audio>(randomName, randomDescription, randomDuration));
+		audioLibrary->insertAudio(std::make_shared<Audio>(randomName, randomDescription, randomDuration));
 	}
 	SendSuccess(std::to_string(amountOfAudio) + " Audio Files have been generated.\n");
 }
