@@ -21,6 +21,11 @@ private:
 	int count = 0;
 };
 
+/// <summary>
+/// Creates and inserts the data into a node and connects it with the other nodes in the circular linked list
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="data"></param>
 template<class T>
 inline void CircularLinkedList<T>::insert(std::shared_ptr<T> data)
 {
@@ -43,6 +48,12 @@ inline void CircularLinkedList<T>::insert(std::shared_ptr<T> data)
 	this->count++;
 }
 
+/// <summary>
+/// Finds and removes the node containing the data from the circular linked list
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="data"></param>
+/// <returns></returns>
 template<class T>
 inline bool CircularLinkedList<T>::removeData(std::shared_ptr<T> data)
 {

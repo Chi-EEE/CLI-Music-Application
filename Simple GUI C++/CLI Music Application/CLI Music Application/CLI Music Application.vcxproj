@@ -129,8 +129,6 @@
   <ItemGroup>
     <ClCompile Include="Artist.cpp" />
     <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="AudioLibrary.cpp" />
-    <ClCompile Include="DoubleLinkedNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Playlist.cpp" />

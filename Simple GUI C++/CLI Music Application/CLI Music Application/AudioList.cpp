@@ -1,5 +1,11 @@
 #include "AudioList.h"
 
+/// <summary>
+/// Searches through the audioList and finds if the audioName matches the audio's name
+/// Returns the matched audio
+/// </summary>
+/// <param name="audioName"></param>
+/// <returns></returns>
 std::shared_ptr<Audio> AudioList::getAudioByName(std::string audioName)
 {
 	if (getAudioCount() > 0) {
@@ -15,6 +21,11 @@ std::shared_ptr<Audio> AudioList::getAudioByName(std::string audioName)
 	return nullptr;
 }
 
+/// <summary>
+/// Add audio to the audioList
+/// </summary>
+/// <param name="audio"></param>
+/// <returns></returns>
 bool AudioList::insertAudio(std::shared_ptr<Audio> audio)
 {
 	if (getAudioByName(audio->getName()) == nullptr) {
@@ -24,11 +35,20 @@ bool AudioList::insertAudio(std::shared_ptr<Audio> audio)
 	return false;
 }
 
+/// <summary>
+/// Removes the audio from the audioList
+/// </summary>
+/// <param name="audio"></param>
+/// <returns></returns>
 bool AudioList::removeAudio(std::shared_ptr<Audio> audio)
 {
 	return audioList.removeData(audio);
 }
 
+/// <summary>
+/// Goes through the audioList and plays the next audio
+/// It asks the user whether to continue after the audio has completed playing
+/// </summary>
 void AudioList::playAllAudio()
 {
 	if (getAudioCount() > 0) {
@@ -52,6 +72,11 @@ void AudioList::playAllAudio()
 	}
 }
 
+/// <summary>
+/// Removes the audio which matches the audioName
+/// </summary>
+/// <param name="audioName"></param>
+/// <returns></returns>
 bool AudioList::removeAudioByName(std::string audioName)
 {
 	auto audio = getAudioByName(audioName);
@@ -61,6 +86,10 @@ bool AudioList::removeAudioByName(std::string audioName)
 	return false;
 }
 
+/// <summary>
+/// Returns a string with a list of the audio names
+/// </summary>
+/// <returns></returns>
 std::string AudioList::getAllAudio()
 {
 	std::string result = "";

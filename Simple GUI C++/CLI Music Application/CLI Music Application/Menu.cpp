@@ -68,7 +68,7 @@ void Menu::run() {
 }
 
 /// <summary>
-/// The submenu for handling audio files
+/// Submenu for handling audio objects
 /// </summary>
 void Menu::viewAudioMenu()
 {
@@ -142,13 +142,12 @@ void Menu::viewAudioMenu()
 /// Asks the user to create an Audio instance with its name, description, duration and artist.
 /// </summary>
 void Menu::createAudio() {
-	std::string audioName;
-	std::string audioDescription;
+	std::string audioName, audioDescription;
 	int audioDuration = 1;
 
 	while (true) {
 		std::cout << "Please enter the Audio's Name: ";
-		std::cin >> audioName;
+		std::getline(std::cin >> std::ws, audioName);
 		if (audioLibrary->getAudioByName(audioName) == nullptr)
 		{
 			break;
@@ -158,11 +157,8 @@ void Menu::createAudio() {
 			return; // EXIT FUNCTION
 		}
 	}
-	if (!continueOperation()) {
-		return; // EXIT FUNCTION
-	}
 	std::cout << "Please enter the Audio's Description: ";
-	std::cin >> audioDescription;
+	std::getline(std::cin >> std::ws, audioDescription);
 	if (!continueOperation()) {
 		return; // EXIT FUNCTION
 	}
@@ -173,6 +169,9 @@ void Menu::createAudio() {
 			break;
 		}
 		SendError("Error: Numbers only.\n");
+		if (!continueOperation()) {
+			return; // EXIT FUNCTION
+		}
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
 	}
@@ -185,6 +184,9 @@ void Menu::createAudio() {
 			break;
 		}
 		SendError("\nError: 0 or 1");
+		if (!continueOperation()) {
+			return; // EXIT FUNCTION
+		}
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
 	}
@@ -257,7 +259,7 @@ void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
 			std::string newAudioName;
 			while (true) {
 				std::cout << "Please enter the Audio's new Name:\n> ";
-				std::cin >> newAudioName;
+				std::getline(std::cin >> std::ws, newAudioName);
 				if (audioLibrary->getAudioByName(newAudioName) == nullptr)
 				{
 					if (!continueOperation()) {
@@ -278,7 +280,7 @@ void Menu::updateAudio(std::string audioName, std::shared_ptr<Audio> audio)
 		{
 			std::string newAudioDescription;
 			std::cout << "Please enter the Audio's Description: ";
-			std::cin >> newAudioDescription;
+			std::getline(std::cin >> std::ws, newAudioDescription);
 			if (continueOperation()) {
 				audio->setDescription(newAudioDescription);
 				SendSuccess(audioName + "'s new Description is: " + newAudioDescription + ".\n");
@@ -383,7 +385,7 @@ void Menu::playAudio(std::string audioName, std::shared_ptr<Audio> audio) {
 }
 
 /// <summary>
-/// Sub menu for handling playlists
+/// Submenu for handling playlists
 /// </summary>
 void Menu::viewPlaylistMenu()
 {
@@ -493,14 +495,6 @@ void Menu::viewArtistMenu()
 }
 
 /// <summary>
-/// Lists all the Audio inside of the Playlist
-/// </summary>
-/// <param name="playlist"></param>
-void Menu::viewPlaylist(std::shared_ptr<Playlist> playlist) {
-	std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
-}
-
-/// <summary>
 /// Asks the user which Audio to insert into the playlist
 /// </summary>
 /// <param name="playlist">Playlist to add the Audio into</param>
@@ -558,7 +552,7 @@ void Menu::removePlaylist(std::shared_ptr<Playlist> playlist) {
 std::shared_ptr<Artist> Menu::createArtist() {
 	std::string artistName;
 	std::cout << "Please enter the Artist's Name: ";
-	std::cin >> artistName;
+	std::getline(std::cin >> std::ws, artistName);
 	auto artist = std::make_shared<Artist>(artistName);
 	this->artists.push_back(artist);
 	SendSuccess("Created Artist: " + artistName + ".\n\n");
@@ -573,7 +567,7 @@ void Menu::removeArtist() {
 	while (true) {
 		std::string artistName;
 		std::cout << "Please enter the Artist's Name you want to remove: ";
-		std::cin >> artistName;
+		std::getline(std::cin >> std::ws, artistName);
 		for (int i = 0; i < artists.size(); i++) {
 			if (artists[i]->getName() == artistName) {
 				SendSuccess("Removed Artist: " + artistName + ".\n\n");
@@ -594,9 +588,17 @@ void Menu::removeArtist() {
 void Menu::createPlaylist() {
 	std::string playlistName;
 	std::cout << "Please enter the Playlist's Name: ";
-	std::cin >> playlistName;
+	std::getline(std::cin >> std::ws, playlistName);
 	playlists.insert(std::make_shared<Playlist>(playlistName));
 	SendSuccess("Created playlist '" + playlistName + "'.\n\n");
+}
+
+/// <summary>
+/// Lists all the Audio inside of the Playlist
+/// </summary>
+/// <param name="playlist"></param>
+void Menu::viewPlaylist(std::shared_ptr<Playlist> playlist) {
+	std::cout << "All Audio files in the Playlist: " << playlist->getAllAudio();
 }
 
 /// <summary>
@@ -628,13 +630,18 @@ void Menu::playAllAudioInProgram()
 }
 
 /// <summary>
-/// Ask user if they would like to continue operation
+/// Asks user if they would like to continue operation
 /// </summary>
 /// <returns>True = continue / False = stop</returns>
 bool Menu::continueOperation() {
 	return YesOrNo("\nWould you like to continue:\n 0 = No\n 1 = Yes\n> ");
 }
 
+/// <summary>
+/// Loop to ask the user a question and return whether the user has entered a 1 or a 0
+/// </summary>
+/// <param name="question"></param>
+/// <returns></returns>
 bool Menu::YesOrNo(std::string question) {
 	bool confirmation = false;
 	while (true) {
@@ -651,6 +658,13 @@ bool Menu::YesOrNo(std::string question) {
 	return confirmation;
 }
 
+/// <summary>
+/// Asks the user for an audio name. 
+/// If audio matches the name, it is returned from the method
+/// </summary>
+/// <param name="audioName"></param>
+/// <param name="audioList"></param>
+/// <returns></returns>
 std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName, std::shared_ptr<AudioList> audioList)
 {
 	if (audioList->getAudioCount() == 0) {
@@ -660,7 +674,7 @@ std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName, std::shared_ptr
 	std::shared_ptr<Audio> audio = nullptr;
 	while (true) {
 		std::cout << "Please enter the Audio's Name: ";
-		std::cin >> audioName;
+		std::getline(std::cin >> std::ws, audioName);
 		audio = audioList->getAudioByName(audioName);
 		if (audio != nullptr) {
 			break;
@@ -675,6 +689,12 @@ std::shared_ptr<Audio> Menu::askForAudio(std::string& audioName, std::shared_ptr
 	return audio;
 }
 
+/// <summary>
+/// Which asks the user for a playlist name. 
+/// If there is a playlist that matches the name, it is returned from the method
+/// </summary>
+/// <param name="playlistName"></param>
+/// <returns></returns>
 std::shared_ptr<Playlist> Menu::askForPlaylist(std::string& playlistName)
 {
 	if (playlists.getCount() == 0) {
@@ -683,7 +703,7 @@ std::shared_ptr<Playlist> Menu::askForPlaylist(std::string& playlistName)
 	}
 	while (true) {
 		std::cout << "Please enter the Playlist's Name: ";
-		std::cin >> playlistName;
+		std::getline(std::cin >> std::ws, playlistName);
 		auto temp = playlists.getHead();
 		do
 		{
@@ -702,11 +722,17 @@ std::shared_ptr<Playlist> Menu::askForPlaylist(std::string& playlistName)
 	return nullptr;
 }
 
+/// <summary>
+/// Lists all the audios in the program
+/// </summary>
 void Menu::displayAllAudio()
 {
 	std::cout << "All Audio files in the Program: " << audioLibrary->getAllAudio();
 }
 
+/// <summary>
+/// Lists all the playlists in the program
+/// </summary>
 void Menu::displayAllPlaylists() {
 	std::cout << "All Playlists in the Program: ";
 	std::string result = "";
@@ -723,6 +749,9 @@ void Menu::displayAllPlaylists() {
 	std::cout << result;
 }
 
+/// <summary>
+/// Lists all the artists in the program
+/// </summary>
 void Menu::displayAllArtists() {
 	std::cout << "All Artists in the Program: ";
 	std::string result = "";
@@ -733,6 +762,9 @@ void Menu::displayAllArtists() {
 	std::cout << result;
 }
 
+/// <summary>
+/// Randomly generates 3 - 5 audio objects with random names, description, and duration
+/// </summary>
 void Menu::generateAudioFiles()
 {
 	int amountOfAudio = 3 + rand() % 3;
@@ -745,6 +777,9 @@ void Menu::generateAudioFiles()
 	SendSuccess(std::to_string(amountOfAudio) + " Audio Files have been generated.\n");
 }
 
+/// <summary>
+/// Randomly generates 3 - 5 playlists with random names
+/// </summary>
 void Menu::generatePlaylist()
 {
 	int amountOfPlaylist = 3 + rand() % 3;
@@ -755,6 +790,9 @@ void Menu::generatePlaylist()
 	SendSuccess(std::to_string(amountOfPlaylist) + " Playlists have been generated.\n");
 }
 
+/// <summary>
+/// Randomly generates 3 - 5 artists with random names
+/// </summary>
 void Menu::generateArtists()
 {
 	int amountOfArtist = 3 + rand() % 3;
